@@ -10,7 +10,7 @@ import java.util.List;
  *
  * @author Alan
  */
-public class Agent {
+public class Agent implements Comparable<Agent> {
     /**
      * orientation puede ser "up", "down", "left", "right", es case insentitive
      */
@@ -20,8 +20,9 @@ public class Agent {
     private int positionY;
     private Environment env;
     private ProximitySensor prox;
+    private MessageServer msgSvr;
 
-    public Agent(int id, String orientation, int positionX, int positionY, Environment env) {
+    public Agent(int id, String orientation, int positionX, int positionY, Environment env, MessageServer msgSvr) {
         this.id = id;
         this.orientation = orientation.toLowerCase();
         this.positionX = positionX;
@@ -29,8 +30,11 @@ public class Agent {
         this.env = env;
         this.prox = new ProximitySensor(this);
         this.env.setObjectInPosition(positionX, positionY, Environment.AGENT);
+        this.msgSvr = msgSvr;
     }
 
+    //Getters
+    
     public String getOrientation() {
         return orientation;
     }
@@ -46,6 +50,23 @@ public class Agent {
     public Environment getEnv() {
         return env;
     }
+    
+    public int getId(){
+        return id;
+    }
+    
+    //End Getters
+    
+    //Overriden Methods
+    
+    @Override
+    public int compareTo(Agent o) {
+        return id-o.id;
+    }
+    
+    //End Overriden Methods
+    
+    //Ejecutores de acciones
     
     public void executeListOfActions(List<String> actions){
         for(String action : actions){
@@ -85,6 +106,7 @@ public class Agent {
                 break;
         }
     }
+    //End ejecutores de acciones
     
     //Acciones planeables
     
@@ -212,6 +234,32 @@ public class Agent {
         return prox.senseDistance();
     }
     
+    public void interpretMessage(Message msg){
+        //TO DO logica de interpretacion de mensaje
+    }
+    
     //Fin Otras Acciones
     
+    //Comunicacion
+    /**
+     * 
+     * @param msg mensaje a enviar
+     * @return true si se envio el mensaje, false si fallo el envio
+     */
+    private boolean sendMessage(Message msg){
+        if(msg.getReceiverId() == -1){
+            msgSvr.broadcastMessage(msg);
+            return true;
+        }
+        else{
+            return msgSvr.sendMessage(msg);
+        }
+    }
+    
+    public void receiveMessage(Message msg){
+        interpretMessage(msg);
+    }
+    
+    //Comunicacion
+   
 }
