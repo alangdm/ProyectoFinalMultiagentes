@@ -17,11 +17,11 @@ public class ProyectoFinalMultiagentes {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        int[][] map = new int[4][];
-        map[0] = new int[]{1,0,0};
-        map[1] = new int[]{0,0,0};
-        map[2] = new int[]{0,0,0};
-        map[3] = new int[]{0,1,0};
+        char[][] map = new char[4][];
+        map[0] = new char[]{1,0,0};
+        map[1] = new char[]{0,0,0};
+        map[2] = new char[]{0,0,0};
+        map[3] = new char[]{0,1,0};
         
         Environment env = new Environment(map);
         MessageServer msgSvr = new MessageServer();
@@ -34,7 +34,7 @@ public class ProyectoFinalMultiagentes {
         actions.add("moveforward");
         //actions.add("moveforward"); //descomentar para ver como en caso de que tenga en frente una pared, obstaculo o agente gira a la izquierda hasta encontrar un lugar al que pueda avanzar y avance a el
         
-        Agent ag = new Agent(0, "right", 1, 2, env, msgSvr);
+        Agent ag = new Agent(0, "right", 1, 2, env, msgSvr, 100);
         msgSvr.addAgent(ag);
         System.out.println(env);
         ag.executeListOfActions(actions);

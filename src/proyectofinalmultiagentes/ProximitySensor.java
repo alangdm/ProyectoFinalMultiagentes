@@ -27,8 +27,9 @@ public class ProximitySensor {
         switch(owner.getOrientation()){
             case "up":
                 for(int i = originalY-1;i>=0;i--){
-                    int objectInI = env.getObjectInPosition(originalX, i);
-                    if(objectInI==Environment.OBSTACLE || objectInI==Environment.AGENT){
+                    char objectInI = env.getMapObjectInPosition(originalX, i);
+                    char agentInI = env.getAgentInPostition(originalX, i);
+                    if(objectInI==Environment.OBSTACLE || agentInI==Environment.AGENT){
                         break;
                     }
                     else{
@@ -38,8 +39,9 @@ public class ProximitySensor {
                 return distance;
             case "down":
                 for(int i = originalY+1;i<env.getMapSizeY();i++){
-                    int objectInI = env.getObjectInPosition(originalX, i);
-                    if(objectInI==Environment.OBSTACLE || objectInI==Environment.AGENT){
+                    char objectInI = env.getMapObjectInPosition(originalX, i);
+                    char agentInI = env.getAgentInPostition(originalX, i);
+                    if(objectInI==Environment.OBSTACLE || agentInI==Environment.AGENT){
                         break;
                     }
                     else{
@@ -49,8 +51,9 @@ public class ProximitySensor {
                 return distance;
             case "left":
                 for(int i = originalX-1;i>=0;i--){
-                    int objectInI = env.getObjectInPosition(i, originalY);
-                    if(objectInI==Environment.OBSTACLE || objectInI==Environment.AGENT){
+                    char objectInI = env.getMapObjectInPosition(i, originalY);
+                    char agentInI = env.getAgentInPostition(i, originalY);
+                    if(objectInI==Environment.OBSTACLE || agentInI==Environment.AGENT){
                         break;
                     }
                     else{
@@ -60,8 +63,9 @@ public class ProximitySensor {
                 return distance;
             case "right":
                 for(int i = originalX+1;i<env.getMapSizeX();i++){
-                    int objectInI = env.getObjectInPosition(i, originalY);
-                    if(objectInI==Environment.OBSTACLE || objectInI==Environment.AGENT){
+                    char objectInI = env.getMapObjectInPosition(i, originalY);
+                    char agentInI = env.getAgentInPostition(i, originalY);
+                    if(objectInI==Environment.OBSTACLE || agentInI==Environment.AGENT){
                         break;
                     }
                     else{

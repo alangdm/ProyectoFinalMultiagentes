@@ -11,26 +11,40 @@ import java.util.List;
  * @author Alan
  */
 public class Agent implements Comparable<Agent> {
+    
+    public static final char COLORNONE = 0;
+    public static final char COLORRED = 1;
+    public static final char COLORGREEN = 2;
+    public static final char COLORBLUE = 3;
+    
+    private int id;
     /**
      * orientation puede ser "up", "down", "left", "right", es case insentitive
      */
-    private int id;
     private String orientation;
     private int positionX;
     private int positionY;
     private Environment env;
     private ProximitySensor prox;
     private MessageServer msgSvr;
+    private int capacity;
+    private char currentColor;
+    private int colorAmount;
+    private int amountToHarvest;
 
-    public Agent(int id, String orientation, int positionX, int positionY, Environment env, MessageServer msgSvr) {
+    public Agent(int id, String orientation, int positionX, int positionY, Environment env, MessageServer msgSvr, int capacity) {
         this.id = id;
         this.orientation = orientation.toLowerCase();
         this.positionX = positionX;
         this.positionY = positionY;
         this.env = env;
         this.prox = new ProximitySensor(this);
-        this.env.setObjectInPosition(positionX, positionY, Environment.AGENT);
+        this.env.setAgentInPosition(positionX, positionY);
         this.msgSvr = msgSvr;
+        this.capacity = capacity;
+        this.currentColor = COLORNONE;
+        this.colorAmount = 0;
+        this.amountToHarvest = 0;
     }
 
     //Getters
@@ -87,7 +101,7 @@ public class Agent implements Comparable<Agent> {
         }
     }
     
-    public void executeAction(String action){
+    private void executeAction(String action){
         switch(action.toLowerCase()){
             case "turnleft":
                 turnLeft();
@@ -101,6 +115,12 @@ public class Agent implements Comparable<Agent> {
             case "movebackwards":
                 moveBackwards();
                 break;
+            case "harvestcolor":
+                harvestColor();
+                break;
+            case "depositcolor":
+                depositColor();
+                break;
             default:
                 //ERROR accion invalida
                 break;
@@ -110,7 +130,7 @@ public class Agent implements Comparable<Agent> {
     
     //Acciones planeables
     
-    public void turnLeft(){
+    private void turnLeft(){
         switch(orientation){
             case "up":
                 orientation = "left";
@@ -127,7 +147,7 @@ public class Agent implements Comparable<Agent> {
         }
     }
     
-    public void turnRight(){
+    private void turnRight(){
         switch(orientation){
             case "up":
                 orientation = "right";
@@ -144,69 +164,131 @@ public class Agent implements Comparable<Agent> {
         }
     }
     
-    public void moveForward(){
+    private void moveForward(){
         switch(orientation){
             case "up":
-                if((positionY-1)>=0 && env.getObjectInPosition(positionX, positionY-1)== Environment.EMPTY){
-                    env.setObjectInPosition(positionX, positionY, Environment.EMPTY);
+                if((positionY-1)>=0 && env.getMapObjectInPosition(positionX, positionY-1)== Environment.EMPTY){
+                    env.removeAgentFromPosition(positionX, positionY);
                     positionY--;
-                    env.setObjectInPosition(positionX, positionY, Environment.AGENT);
+                    env.setAgentInPosition(positionX, positionY);
                 }
                 break;
             case "down":
-                if((positionY+1)<env.getMapSizeY() && env.getObjectInPosition(positionX, positionY+1)== Environment.EMPTY){
-                    env.setObjectInPosition(positionX, positionY, Environment.EMPTY);
+                if((positionY+1)<env.getMapSizeY() && env.getMapObjectInPosition(positionX, positionY+1)== Environment.EMPTY){
+                    env.removeAgentFromPosition(positionX, positionY);
                     positionY++;
-                    env.setObjectInPosition(positionX, positionY, Environment.AGENT);
+                    env.setAgentInPosition(positionX, positionY);
                 }
                 break;
             case "left":
-                if((positionX-1)>=0 && env.getObjectInPosition(positionX-1, positionY)== Environment.EMPTY){
-                    env.setObjectInPosition(positionX, positionY, Environment.EMPTY);
+                if((positionX-1)>=0 && env.getMapObjectInPosition(positionX-1, positionY)== Environment.EMPTY){
+                    env.removeAgentFromPosition(positionX, positionY);
                     positionX--;
-                    env.setObjectInPosition(positionX, positionY, Environment.AGENT);
+                    env.setAgentInPosition(positionX, positionY);
                 }
                 break;
             case "right":
-                if((positionX+1)<env.getMapSizeY() && env.getObjectInPosition(positionX+1, positionY)== Environment.EMPTY){
-                    env.setObjectInPosition(positionX, positionY, Environment.EMPTY);
+                if((positionX+1)<env.getMapSizeY() && env.getMapObjectInPosition(positionX+1, positionY)== Environment.EMPTY){
+                    env.removeAgentFromPosition(positionX, positionY);
                     positionX++;
-                    env.setObjectInPosition(positionX, positionY, Environment.AGENT);
+                    env.setAgentInPosition(positionX, positionY);
                 }
                 break;
         }
     }
     
-    public void moveBackwards(){
+    private void moveBackwards(){
         switch(orientation){
             case "up":
-                if((positionY+1)<env.getMapSizeY() && env.getObjectInPosition(positionX, positionY+1)== Environment.EMPTY){
-                    env.setObjectInPosition(positionX, positionY, Environment.EMPTY);
+                if((positionY+1)<env.getMapSizeY() && env.getMapObjectInPosition(positionX, positionY+1)== Environment.EMPTY){
+                    env.removeAgentFromPosition(positionX, positionY);
                     positionY++;
-                    env.setObjectInPosition(positionX, positionY, Environment.AGENT);
+                    env.setAgentInPosition(positionX, positionY);
                 }
                 break;
             case "down":
-                if((positionY-1)>=0 && env.getObjectInPosition(positionX, positionY-1)== Environment.EMPTY){
-                    env.setObjectInPosition(positionX, positionY, Environment.EMPTY);
+                if((positionY-1)>=0 && env.getMapObjectInPosition(positionX, positionY-1)== Environment.EMPTY){
+                    env.removeAgentFromPosition(positionX, positionY);
                     positionY--;
-                    env.setObjectInPosition(positionX, positionY, Environment.AGENT);
+                    env.setAgentInPosition(positionX, positionY);
                 }
                 break;
             case "left":
-                if((positionX+1)<env.getMapSizeY() && env.getObjectInPosition(positionX+1, positionY)== Environment.EMPTY){
-                    env.setObjectInPosition(positionX, positionY, Environment.EMPTY);
+                if((positionX+1)<env.getMapSizeY() && env.getMapObjectInPosition(positionX+1, positionY)== Environment.EMPTY){
+                    env.removeAgentFromPosition(positionX, positionY);
                     positionX++;
-                    env.setObjectInPosition(positionX, positionY, Environment.AGENT);
+                    env.setAgentInPosition(positionX, positionY);
                 }
                 break;
             case "right":
-                if((positionX-1)>=0 && env.getObjectInPosition(positionX-1, positionY)== Environment.EMPTY){
-                    env.setObjectInPosition(positionX, positionY, Environment.EMPTY);
+                if((positionX-1)>=0 && env.getMapObjectInPosition(positionX-1, positionY)== Environment.EMPTY){
+                    env.removeAgentFromPosition(positionX, positionY);
                     positionX--;
-                    env.setObjectInPosition(positionX, positionY, Environment.AGENT);
+                    env.setAgentInPosition(positionX, positionY);
                 }
                 break;
+        }
+    }
+    
+    private void harvestColor(){
+        //OPCIONAL CREAR CLASE DE SOURCE TAMBIEN
+        switch(env.getMapObjectInPosition(positionX, positionY)){
+            case Environment.REDSOURCE:
+                if(currentColor == COLORRED){
+                    if(capacity<amountToHarvest){
+                        colorAmount = capacity;
+                    }
+                    else{
+                        colorAmount = amountToHarvest;
+                    }
+                    amountToHarvest-=colorAmount;
+                }
+                else{
+                    //FAIL
+                }
+                break;
+            case Environment.GREENSOURCE:
+                if(currentColor == COLORGREEN){
+                    if(capacity<amountToHarvest){
+                        colorAmount = capacity;
+                    }
+                    else{
+                        colorAmount = amountToHarvest;
+                    }
+                    amountToHarvest-=colorAmount;
+                }
+                else{
+                    //FAIL
+                }
+                break;
+            case Environment.BLUESOURCE:
+                if(currentColor == COLORBLUE){
+                    if(capacity<amountToHarvest){
+                        colorAmount = capacity;
+                    }
+                    else{
+                        colorAmount = amountToHarvest;
+                    }
+                    amountToHarvest-=colorAmount;
+                }
+                else{
+                    //FAIL
+                }
+                break;
+            default:
+                //FAIL
+                break;
+        }
+    }
+    
+    private void depositColor(){
+        if(env.getMapObjectInPosition(positionX, positionY)==Environment.CONTAINER){
+            //LLAMAR A METODO EN CONTAINER PARA METER COLOR
+            colorAmount = 0;
+            currentColor = COLORNONE;
+        }
+        else{
+            //FAIL
         }
     }
     
