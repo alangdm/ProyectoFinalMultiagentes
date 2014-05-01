@@ -10,6 +10,7 @@ import Nodes.MaxNodes.MaxNode;
 import State.Coord2D;
 import State.State;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  *
@@ -18,8 +19,8 @@ import java.util.HashMap;
 public class QNavigateForPut extends QNode<Coord2D>{//destinatin
     public QNavigateForPut(String name, MaxNode child){
         super(name);
-        C1 = new HashMap<>();
-        C2 = new HashMap<>();
+        C1 = new ConcurrentHashMap<>();
+        C2 = new ConcurrentHashMap<>();
         this.child = child;
     }
     @Override
@@ -32,17 +33,21 @@ public class QNavigateForPut extends QNode<Coord2D>{//destinatin
     }
     @Override
     public float C1(State s) {
-        if(!C1.containsKey(s.getDest())){
+        /*if(!C1.containsKey(s.getDest())){
             C1.put(s.getDest(), 0.0f);
-        }
+        }*/
+        
+        C1.putIfAbsent(s.getDest(), 0.0f);
         return C1.get(s.getDest());
     }
 
     @Override
     public float C2(State s) {
-        if(!C2.containsKey(s.getDest())){
+        /*if(!C2.containsKey(s.getDest())){
             C2.put(s.getDest(), 0.0f);
-        }
+        }*/
+        
+        C2.putIfAbsent(s.getDest(), 0.0f);
         return C2.get(s.getDest());
     }
 
@@ -50,14 +55,16 @@ public class QNavigateForPut extends QNode<Coord2D>{//destinatin
     @Override
     public int time(State s) {
         Coord2D piv= s.getDest();
-        if(!time.containsKey(piv)){
+        /*if(!time.containsKey(piv)){
             time.put(piv, 1);
-        }
+        }*/
+        
+        time.putIfAbsent(piv, 1);
         return time.get(piv);
     }
 
     @Override
-    public void editTime(State s) {
+    public synchronized void editTime(State s) {
         Coord2D piv= s.getDest();
         if(!time.containsKey(piv)){
             time.put(piv, 1);

@@ -10,6 +10,7 @@ import Nodes.MaxNodes.MaxNode;
 import State.Double2DCoord;
 import State.State;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  *
@@ -18,8 +19,8 @@ import java.util.HashMap;
 public class QGet extends QNode<Double2DCoord>{//source, dest
     public QGet(String name, MaxNode child){
         super(name);
-        C1 = new HashMap<>();
-        C2 = new HashMap<>();
+        C1 = new ConcurrentHashMap<>();
+        C2 = new ConcurrentHashMap<>();
         this.child = child;
     }
     @Override
@@ -33,32 +34,39 @@ public class QGet extends QNode<Double2DCoord>{//source, dest
     @Override
     public float C1(State s) {
         Double2DCoord sourceDest = new Double2DCoord(s.getSource(), s.getDest());
-        if(!C1.containsKey(sourceDest)){
+        /*if(!C1.containsKey(sourceDest)){
             C1.put(sourceDest, 0.0f);
-        }
+        }*/
+        
+        C1.putIfAbsent(sourceDest, 0.0f);
         return C1.get(sourceDest);
     }
 
     @Override
     public float C2(State s) {
         Double2DCoord sourceDest = new Double2DCoord(s.getSource(), s.getDest());
-        if(!C2.containsKey(sourceDest)){
+        /*if(!C2.containsKey(sourceDest)){
             C2.put(sourceDest, 0.0f);
-        }
+        }*/
+        
+        C2.putIfAbsent(sourceDest, 0.0f);
         return C2.get(sourceDest);
     }
 
     @Override
     public int time(State s) {
         Double2DCoord nav = new Double2DCoord(s.getSource(),s.getDest());
-        if(!time.containsKey(nav)){
+        /*if(!time.containsKey(nav)){
             time.put(nav, 1);
         }
+        */
+        
+        time.putIfAbsent(nav, 1);
         return time.get(nav);
     }
 
     @Override
-    public void editTime(State s) {
+    public synchronized void editTime(State s) {
         Double2DCoord nav = new Double2DCoord(s.getSource(),s.getDest());
         if(!time.containsKey(nav)){
             time.put(nav, 1);

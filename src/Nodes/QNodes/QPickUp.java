@@ -7,12 +7,13 @@ import State.Coord2D;
 import State.Double2DCoord;
 import State.State;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class QPickUp extends QNode<Double2DCoord>{//source, taxi loc
     public QPickUp(String name, MaxNode child){
         super(name);
-        C1 = new HashMap<>();
-        C2 = new HashMap<>();
+        C1 = new ConcurrentHashMap<>();
+        C2 = new ConcurrentHashMap<>();
         this.child = child;
     }
     @Override
@@ -26,18 +27,21 @@ public class QPickUp extends QNode<Double2DCoord>{//source, taxi loc
     @Override
     public float C1(State s) {
         Double2DCoord sourceCab = new Double2DCoord(s.getSource(), s.getCab());
-        if(!C1.containsKey(sourceCab)){
+        /*if(!C1.containsKey(sourceCab)){
             C1.put(sourceCab, 0.0f);
-        }
+        }*/
+        C1.putIfAbsent(sourceCab, 0.0f);
         return C1.get(sourceCab);
     }
 
     @Override
     public float C2(State s) {
         Double2DCoord sourceCab = new Double2DCoord(s.getSource(), s.getCab());
-        if(!C2.containsKey(sourceCab)){
+        /*if(!C2.containsKey(sourceCab)){
             C2.put(sourceCab, 0.0f);
-        }
+        }*/
+        
+        C2.putIfAbsent(sourceCab, 0.0f);
         return C2.get(sourceCab);
     }
 
@@ -45,14 +49,16 @@ public class QPickUp extends QNode<Double2DCoord>{//source, taxi loc
     @Override
     public int time(State s) {
         Double2DCoord nav = new Double2DCoord(s.getSource(),s.getCab());
-        if(!time.containsKey(nav)){
+        /*if(!time.containsKey(nav)){
             time.put(nav, 1);
-        }
+        }*/
+        
+        time.putIfAbsent(nav, 1);
         return time.get(nav);
     }
 
     @Override
-    public void editTime(State s) {
+    public synchronized void editTime(State s) {
         Double2DCoord nav = new Double2DCoord(s.getSource(),s.getCab());
         if(!time.containsKey(nav)){
             time.put(nav, 1);
