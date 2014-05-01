@@ -31,9 +31,11 @@ public class MaxNorth extends PrimitiveMaxNode<Integer>{
 
     @Override
     public float V(State s) {
-        if(!V.containsKey(0)){
+        /*if(!V.containsKey(0)){
             V.put(0, 0.0f);
-        } 
+        } */
+        
+        V.putIfAbsent(0, 0.0f);
         return V.get(0);
     }
 

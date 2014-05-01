@@ -5,19 +5,21 @@ import Nodes.MaxNodes.PrimitiveMaxNode;
 import Nodes.MaxQGraphNode;
 import State.State;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public abstract class QNode<T> extends MaxQGraphNode{
     protected MaxNode child;
-    protected HashMap<T, Float> C1;
-    protected HashMap<T, Float> C2;
-    protected HashMap<T, Integer> time;
+    protected ConcurrentMap<T, Float> C1;
+    protected ConcurrentMap<T, Float> C2;
+    protected ConcurrentMap<T, Integer> time;
 
     public MaxNode getChild() {
         return child;
     }
     public QNode(String name) {
         super(name);
-        time = new HashMap<>();
+        time = new ConcurrentHashMap<>();
     }
     public abstract int time(State s);
     public abstract void editTime(State s);

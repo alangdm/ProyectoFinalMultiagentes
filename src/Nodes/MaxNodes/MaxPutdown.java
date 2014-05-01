@@ -32,14 +32,17 @@ public class MaxPutdown extends PrimitiveMaxNode<Integer>{
     @Override
     public float V(State s) {
         if(s.getCab().equals(s.getDest()) && s.isInCab()){
-            if(!V.containsKey(0)){
+            /*if(!V.containsKey(0)){
                 V.put(0, 0.0f);
-            }
+            }*/
+            V.putIfAbsent(0, 0.0f);
             return V.get(0);
         }else{
-            if(!V.containsKey(1)){
+            /*if(!V.containsKey(1)){
                 V.put(1, 0.0f);
-            }
+            }*/
+            
+            V.putIfAbsent(1, 0.0f);
             return V.get(1);
         }
         

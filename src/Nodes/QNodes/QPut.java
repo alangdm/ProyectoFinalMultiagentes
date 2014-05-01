@@ -10,6 +10,7 @@ import Nodes.MaxNodes.MaxNode;
 import State.Double2DCoord;
 import State.State;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  *
@@ -19,8 +20,8 @@ public class QPut extends QNode<Double2DCoord>{//ningun argumento
     private int piv =1;
     public QPut(String name, MaxNode child){
         super(name);
-        C1 = new HashMap<>();
-        C2 = new HashMap<>();
+        C1 = new ConcurrentHashMap<>();
+        C2 = new ConcurrentHashMap<>();
         this.child = child;
     }
     @Override
