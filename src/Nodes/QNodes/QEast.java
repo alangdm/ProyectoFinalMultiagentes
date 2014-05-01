@@ -44,7 +44,7 @@ public class QEast extends QNode<NavState>{
             C2.put(nav, 0.0f);
         }*/
         
-        C2.put(nav, 0.0f);
+        C2.putIfAbsent(nav, 0.0f);
         return C2.get(nav);
     }
 
