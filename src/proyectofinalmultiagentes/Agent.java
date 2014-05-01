@@ -46,6 +46,9 @@ public class Agent implements Comparable<Agent> {
         this.colorAmount = 0;
         this.amountToHarvest = 0;
     }
+    public Agent(){
+        
+    }
 
     //Getters
     

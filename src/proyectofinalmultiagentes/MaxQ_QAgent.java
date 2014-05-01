@@ -22,10 +22,17 @@ public class MaxQ_QAgent extends Agent implements Runnable{
     private boolean runMaxQQ = false;
     private MaxQ_QLearning learning;
     private State startState;
+    private ArrayList<State> result;
+
+    public ArrayList<State> getResult() {
+        return result;
+    }
     
     public MaxQ_QAgent(int id, String orientation, int positionX, int positionY, Environment env, MessageServer msgSvr, int capacity,  MaxNode maxRoot) {
-       super(id, orientation, positionX, positionY, env, msgSvr, capacity);
+       //super(id, orientation, positionX, positionY, env, msgSvr, capacity);
+       super();
        this.maxRoot = maxRoot;
+       this.result = new ArrayList<>();
        learning = new MaxQ_QLearning();
     } 
 
@@ -36,9 +43,10 @@ public class MaxQ_QAgent extends Agent implements Runnable{
     
     @Override
     public void run() {
-        while (running) {
+        //while (running) {
             if (runMaxQQ) {
-                  ArrayList<State> result = learning.maxQQ(maxRoot, startState);
+                  result = learning.maxQQ(maxRoot, startState);
+                  runMaxQQ =false;
             }
             else {
                 try {
@@ -46,7 +54,7 @@ public class MaxQ_QAgent extends Agent implements Runnable{
                 } catch (InterruptedException ex) {
                 }
             }
-        }
+        //}
     }
     
     public synchronized void stop() {

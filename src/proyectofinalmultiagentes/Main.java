@@ -5,6 +5,9 @@ import Nodes.MaxNodes.*;
 import Nodes.QNodes.*;
 import State.Coord2D;
 import State.State;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /*
@@ -18,7 +21,7 @@ import java.util.ArrayList;
  * @author Luis Ricardo
  */
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         MaxQ_QLearning learning = new MaxQ_QLearning();
         
         //tree
@@ -71,28 +74,85 @@ public class Main {
         
         MaxNode maxRoot = new Root("MaxRoot", root);
         
+        MaxQ_QAgent agente1 = new MaxQ_QAgent(0, "Caca", 0, 0, null, null, 0, maxRoot);
+        MaxQ_QAgent agente2 = new MaxQ_QAgent(0,"Caca", 0, 0, null, null, 0, maxRoot);
+        MaxQ_QAgent agente3 = new MaxQ_QAgent(0, "Caca", 0, 0, null, null, 0, maxRoot);
         
-        /*ArrayList<State> result = learning.maxQQ(maxRoot, state);
-        System.out.println(result);*/
-        for (int i = 0; i < 10000; i++) {
-            Coord2D start = genStart();
-            Coord2D src = genSrc();
-            Coord2D des = genDes();
-            State state = new State(start,src, false,new  ArrayList<Coord2D>(),des, src);
-            System.out.println("Start: "+start + "\nSource: "+ src+"\nDestination: " + des + "\nBest: " + (man(start,src) + man(src,des) + 2) +"\nCurrent: ");
-            //for (int j = 0; j < 5; j++) {
-                ArrayList<State> result = learning.maxQQ(maxRoot, state);
-                System.out.println(result.size() + ", lista: "+ result);
-            //}
-             
-                
-            /*try {
-                    Thread.sleep(1000);
-                } catch(InterruptedException ex) {
-                    Thread.currentThread().interrupt();
-            }*/
+        for (int i = 0; i < 3000; i++) {
+            
+            State state1 = initState();
+            State state2 = initState();
+            State state3 = initState();
+            
+            agente1.runMaxQQ(state1);
+            agente2.runMaxQQ(state2);
+            agente3.runMaxQQ(state3);
+            Thread ag1 = new Thread(agente1, "Thread de agente1");
+            Thread ag2 = new Thread(agente2, "Thread de agente2");
+            Thread ag3 = new Thread(agente3, "Thread de agente3");
+            ag1.start();
+            ag2.start();
+            ag3.start();
+            
+            int res=0;
+            
+            ag1.join();
+            System.out.println("Agente 1 iteracion: "+ i + "\n"+"Start: "+state1.getCab() + "\nSource: "+ state1.getSource()+"\nDestination: " + state1.getDest() + "\nBest: " + (man(state1.getCab(), state1.getSource()) + man( state1.getSource(),state1.getDest()) + 2) +"\nCurrent: ");
+            //ArrayList<State> result = learning.maxQQ(maxRoot, state);
+            System.out.println(agente1.getResult().size() + ", lista: "+ agente1.getResult());
+            
+            res=0;
+            for (State s : agente1.getResult()) {
+                res+= s.getReward();
+            }
+            try {
+            BufferedWriter out = new BufferedWriter(new FileWriter("resultsAg1.csv", true));
+                out.write(""+res+","+i);
+                out.newLine();
+                out.close();
+            } catch (IOException e) {}
+            
+            ag2.join();
+            System.out.println("Agente 2 iteracion: "+ i + "\n"+"Start: "+state2.getCab() + "\nSource: "+ state2.getSource()+"\nDestination: " + state2.getDest() + "\nBest: " + (man(state2.getCab(), state2.getSource()) + man( state2.getSource(),state2.getDest()) + 2) +"\nCurrent: ");
+            //ArrayList<State> result = learning.maxQQ(maxRoot, state);
+            System.out.println(agente2.getResult().size() + ", lista: "+ agente2.getResult());
+            
+            res=0;
+            for (State s : agente2.getResult()) {
+                res+= s.getReward();
+            }
+            try {
+            BufferedWriter out = new BufferedWriter(new FileWriter("resultsAg2.csv", true));
+                out.write(""+res+","+i);
+                out.newLine();
+                out.close();
+            } catch (IOException e) {}
+            
+            ag3.join();
+            
+            res=0;
+            for (State s : agente3.getResult()) {
+                res+= s.getReward();
+            }
+            try {
+            BufferedWriter out = new BufferedWriter(new FileWriter("resultsAg3.csv", true));
+                out.write(""+res+","+i);
+                out.newLine();
+                out.close();
+            } catch (IOException e) {}
+            
+            System.out.println("Agente 3 iteracion: "+ i + "\n"+"Start: "+state3.getCab() + "\nSource: "+ state3.getSource()+"\nDestination: " + state3.getDest() + "\nBest: " + (man(state3.getCab(), state3.getSource()) + man( state3.getSource(),state3.getDest()) + 2) +"\nCurrent: ");
+            //ArrayList<State> result = learning.maxQQ(maxRoot, state);
+            System.out.println(agente3.getResult().size() + ", lista: "+ agente3.getResult());
         }
         
+    }
+    public static State initState(){
+        Coord2D start = genStart();
+        Coord2D src = genSrc();
+        Coord2D des = genDes();
+        State state = new State(start,src, false,new  ArrayList<Coord2D>(),des, src);
+        return state;
     }
     public static int man(Coord2D start, Coord2D finish){
         return Math.abs(start.getX()-finish.getX())+ Math.abs(start.getY()-finish.getY()) ;
