@@ -19,6 +19,15 @@ public class State {
     private Coord2D source;
     private Coord2D dest;
     private boolean inCab;
+    private int reward;
+
+    public int getReward() {
+        return reward;
+    }
+
+    public void setReward(int reward) {
+        this.reward = reward;
+    }
     private ArrayList<Coord2D> walls;
     public Coord2D currentDest;
     public int size = 5;

@@ -6,6 +6,7 @@ import Nodes.QNodes.QNode;
 import java.util.ArrayList;
 
 public class MaxQ_QLearning {
+    private ArrayList<Integer> rewards;
     private State secondary;
     public ArrayList<State> maxQQ(MaxNode i, State s){
         secondary = s;
@@ -14,6 +15,7 @@ public class MaxQ_QLearning {
             int reward = ((PrimitiveMaxNode)i).reward(s);
             ((PrimitiveMaxNode)i).editV(s,(1-i.getAlpha())*((PrimitiveMaxNode)i).V(s) + i.getAlpha()*reward );
             secondary = ((PrimitiveMaxNode)i).execute(s);
+            s.setReward(reward);
             seq.add(s);
             i.reduceAlpha();
         }else{

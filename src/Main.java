@@ -3,6 +3,9 @@ import Nodes.MaxNodes.*;
 import Nodes.QNodes.*;
 import State.Coord2D;
 import State.State;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /*
@@ -82,7 +85,16 @@ public class Main {
                 ArrayList<State> result = learning.maxQQ(maxRoot, state);
                 System.out.println(result.size() + ", lista: "+ result);
             //}
-             
+            int res = 0;
+            for (State state1 : result) {
+                res+= state1.getReward();
+            }
+             try {
+            BufferedWriter out = new BufferedWriter(new FileWriter("results.csv", true));
+                out.write(""+res+","+i);
+                out.newLine();
+                out.close();
+            } catch (IOException e) {}
                 
             /*try {
                     Thread.sleep(1000);

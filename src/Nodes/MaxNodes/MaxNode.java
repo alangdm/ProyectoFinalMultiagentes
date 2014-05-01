@@ -1,6 +1,4 @@
 package Nodes.MaxNodes;
-
-
 import State.State;
 import Nodes.MaxQGraphNode;
 import Nodes.QNodes.QNode;
