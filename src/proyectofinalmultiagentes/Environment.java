@@ -4,6 +4,9 @@
  */
 package proyectofinalmultiagentes;
 
+import java.awt.Color;
+import java.util.Arrays;
+
 /**
  *
  * @author Alan
@@ -15,7 +18,7 @@ public class Environment {
     public static final char REDSOURCE = 3;
     public static final char GREENSOURCE = 4;
     public static final char BLUESOURCE = 5;
-    public static final char AGENT = 1;
+    //public static final char AGENT = 1;
     /**
      * El map se toma como que 0,0 es la esquina superior izquierda, visualmente hablando, x va de izquierda a derecha y y de arriba a abajo
      */
@@ -23,6 +26,7 @@ public class Environment {
     private char[][] agentsmap;
     private int mapSizeX;
     private int mapSizeY;
+    private Container container;
 
     public Environment(char[][] map) {
         if(map.length >0){
@@ -39,6 +43,22 @@ public class Environment {
         else{
             //ERROR mapa no puede tener 0 en una de sus dimensiones
         }
+    }
+    
+    public char[][] getMapCopy(){
+        char[][] copy = new char[mapSizeX][mapSizeY];
+        for(int i=0;i<mapSizeX;i++){
+            copy[i] = Arrays.copyOf(map[i], mapSizeY);
+        }
+        return copy;
+    }
+    
+    public char[][] getAgentMapCopy(){
+        char[][] copy = new char[mapSizeX][mapSizeY];
+        for(int i=0;i<mapSizeX;i++){
+            copy[i] = Arrays.copyOf(agentsmap[i], mapSizeY);
+        }
+        return copy;
     }
 
     public int getMapSizeX() {
@@ -57,12 +77,20 @@ public class Environment {
         return agentsmap[x][y];
     }
     
-    public void setAgentInPosition(int x, int y){
-        agentsmap[x][y] = AGENT;
+    public void setAgentInPosition(int x, int y, int id){
+        agentsmap[x][y] = (char)id;
     }
     
     public void removeAgentFromPosition(int x, int y){
         agentsmap[x][y] = EMPTY;
+    }
+    
+    public void depositColorInContainer(int color, int amount){
+        container.depositColor(color, amount);
+    }
+    
+    public Color getContainerColor(){
+        return container.getContainerColor();
     }
 
     @Override

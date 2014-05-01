@@ -29,6 +29,10 @@ public class MessageServer {
         agents.remove(agent.getId());
     }
     
+    public Agent getAgent(int id){
+        return agents.get(id);
+    }
+    
     public boolean sendMessage(Message msg){
         int receiverId = msg.getReceiverId();
         Agent receiver = agents.get(receiverId);

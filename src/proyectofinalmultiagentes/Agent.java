@@ -33,13 +33,13 @@ public class Agent implements Comparable<Agent> {
     private int amountToHarvest;
 
     public Agent(int id, String orientation, int positionX, int positionY, Environment env, MessageServer msgSvr, int capacity) {
-        this.id = id;
+        this.id = id>0?id:1;
         this.orientation = orientation.toLowerCase();
         this.positionX = positionX;
         this.positionY = positionY;
         this.env = env;
         this.prox = new ProximitySensor(this);
-        this.env.setAgentInPosition(positionX, positionY);
+        this.env.setAgentInPosition(positionX, positionY, id);
         this.msgSvr = msgSvr;
         this.capacity = capacity;
         this.currentColor = COLORNONE;
@@ -115,6 +115,18 @@ public class Agent implements Comparable<Agent> {
             case "movebackwards":
                 moveBackwards();
                 break;
+            case "moveleft":
+                moveLeft();
+                break;
+            case "moveright":
+                moveRight();
+                break;
+            case "moveup":
+                moveUp();
+                break;
+            case "movedown":
+                moveDown();
+                break;
             case "harvestcolor":
                 harvestColor();
                 break;
@@ -170,28 +182,28 @@ public class Agent implements Comparable<Agent> {
                 if((positionY-1)>=0 && env.getMapObjectInPosition(positionX, positionY-1)== Environment.EMPTY){
                     env.removeAgentFromPosition(positionX, positionY);
                     positionY--;
-                    env.setAgentInPosition(positionX, positionY);
+                    env.setAgentInPosition(positionX, positionY, id);
                 }
                 break;
             case "down":
                 if((positionY+1)<env.getMapSizeY() && env.getMapObjectInPosition(positionX, positionY+1)== Environment.EMPTY){
                     env.removeAgentFromPosition(positionX, positionY);
                     positionY++;
-                    env.setAgentInPosition(positionX, positionY);
+                    env.setAgentInPosition(positionX, positionY, id);
                 }
                 break;
             case "left":
                 if((positionX-1)>=0 && env.getMapObjectInPosition(positionX-1, positionY)== Environment.EMPTY){
                     env.removeAgentFromPosition(positionX, positionY);
                     positionX--;
-                    env.setAgentInPosition(positionX, positionY);
+                    env.setAgentInPosition(positionX, positionY, id);
                 }
                 break;
             case "right":
                 if((positionX+1)<env.getMapSizeY() && env.getMapObjectInPosition(positionX+1, positionY)== Environment.EMPTY){
                     env.removeAgentFromPosition(positionX, positionY);
                     positionX++;
-                    env.setAgentInPosition(positionX, positionY);
+                    env.setAgentInPosition(positionX, positionY, id);
                 }
                 break;
         }
@@ -203,31 +215,51 @@ public class Agent implements Comparable<Agent> {
                 if((positionY+1)<env.getMapSizeY() && env.getMapObjectInPosition(positionX, positionY+1)== Environment.EMPTY){
                     env.removeAgentFromPosition(positionX, positionY);
                     positionY++;
-                    env.setAgentInPosition(positionX, positionY);
+                    env.setAgentInPosition(positionX, positionY, id);
                 }
                 break;
             case "down":
                 if((positionY-1)>=0 && env.getMapObjectInPosition(positionX, positionY-1)== Environment.EMPTY){
                     env.removeAgentFromPosition(positionX, positionY);
                     positionY--;
-                    env.setAgentInPosition(positionX, positionY);
+                    env.setAgentInPosition(positionX, positionY, id);
                 }
                 break;
             case "left":
                 if((positionX+1)<env.getMapSizeY() && env.getMapObjectInPosition(positionX+1, positionY)== Environment.EMPTY){
                     env.removeAgentFromPosition(positionX, positionY);
                     positionX++;
-                    env.setAgentInPosition(positionX, positionY);
+                    env.setAgentInPosition(positionX, positionY, id);
                 }
                 break;
             case "right":
                 if((positionX-1)>=0 && env.getMapObjectInPosition(positionX-1, positionY)== Environment.EMPTY){
                     env.removeAgentFromPosition(positionX, positionY);
                     positionX--;
-                    env.setAgentInPosition(positionX, positionY);
+                    env.setAgentInPosition(positionX, positionY, id);
                 }
                 break;
         }
+    }
+    
+    private void moveLeft(){
+        orientation = "left";
+        moveForward();
+    }
+    
+    private void moveUp(){
+        orientation = "up";
+        moveForward();
+    }
+    
+    private void moveRight(){
+        orientation = "right";
+        moveForward();
+    }
+    
+    private void moveDown(){
+        orientation = "down";
+        moveForward();
     }
     
     private void harvestColor(){
@@ -283,7 +315,7 @@ public class Agent implements Comparable<Agent> {
     
     private void depositColor(){
         if(env.getMapObjectInPosition(positionX, positionY)==Environment.CONTAINER){
-            //LLAMAR A METODO EN CONTAINER PARA METER COLOR
+            env.depositColorInContainer(currentColor, colorAmount);
             colorAmount = 0;
             currentColor = COLORNONE;
         }

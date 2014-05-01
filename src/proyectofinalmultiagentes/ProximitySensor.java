@@ -29,7 +29,7 @@ public class ProximitySensor {
                 for(int i = originalY-1;i>=0;i--){
                     char objectInI = env.getMapObjectInPosition(originalX, i);
                     char agentInI = env.getAgentInPostition(originalX, i);
-                    if(objectInI==Environment.OBSTACLE || agentInI==Environment.AGENT){
+                    if(objectInI==Environment.OBSTACLE || agentInI>0){
                         break;
                     }
                     else{
@@ -41,7 +41,7 @@ public class ProximitySensor {
                 for(int i = originalY+1;i<env.getMapSizeY();i++){
                     char objectInI = env.getMapObjectInPosition(originalX, i);
                     char agentInI = env.getAgentInPostition(originalX, i);
-                    if(objectInI==Environment.OBSTACLE || agentInI==Environment.AGENT){
+                    if(objectInI==Environment.OBSTACLE || agentInI>0){
                         break;
                     }
                     else{
@@ -53,7 +53,7 @@ public class ProximitySensor {
                 for(int i = originalX-1;i>=0;i--){
                     char objectInI = env.getMapObjectInPosition(i, originalY);
                     char agentInI = env.getAgentInPostition(i, originalY);
-                    if(objectInI==Environment.OBSTACLE || agentInI==Environment.AGENT){
+                    if(objectInI==Environment.OBSTACLE || agentInI>0){
                         break;
                     }
                     else{
@@ -65,7 +65,7 @@ public class ProximitySensor {
                 for(int i = originalX+1;i<env.getMapSizeX();i++){
                     char objectInI = env.getMapObjectInPosition(i, originalY);
                     char agentInI = env.getAgentInPostition(i, originalY);
-                    if(objectInI==Environment.OBSTACLE || agentInI==Environment.AGENT){
+                    if(objectInI==Environment.OBSTACLE || agentInI>0){
                         break;
                     }
                     else{
