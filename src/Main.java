@@ -81,8 +81,7 @@ public class Main {
             //for (int j = 0; j < 5; j++) {
                 ArrayList<State> result = learning.maxQQ(maxRoot, state);
                 System.out.println(result.size() + ", lista: "+ result);
-            //}
-            
+            //}       
             /*try {
                     Thread.sleep(1000);
                 } catch(InterruptedException ex) {
