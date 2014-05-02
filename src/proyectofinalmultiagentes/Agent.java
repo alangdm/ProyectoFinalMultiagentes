@@ -7,6 +7,7 @@ package proyectofinalmultiagentes;
 import State.Coord2D;
 import State.State;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  *
@@ -43,6 +44,7 @@ public class Agent implements Comparable<Agent> {
     private int currentRed;
     private int currentGreen;
     private int currentBlue;
+    private ConcurrentLinkedQueue<Message> messageQueue;
 
     public Agent(String orientation, int positionX, int positionY, Environment env, MessageServer msgSvr, int capacity, int objectiveRed, int objectiveGreen, int objectiveBlue) {
         this.id = nextId++;
@@ -62,10 +64,10 @@ public class Agent implements Comparable<Agent> {
         this.objectiveBlue = objectiveBlue;
         estimatedRed = estimatedGreen = estimatedBlue = 0;
         currentRed = currentGreen = currentBlue = 0;
+        messageQueue = new ConcurrentLinkedQueue<>();
     }
-    public Agent(){
-        
-    }
+    
+    public Agent(){}
 
     //Getters
     
@@ -121,10 +123,27 @@ public class Agent implements Comparable<Agent> {
     
     //End Overriden Methods
     
+    public void setOrientation(String orientation){
+        switch(orientation.toLowerCase()){
+            case "north":
+                this.orientation = "up";
+                break;
+            case "south":
+                this.orientation = "down";
+                break;
+            case "east":
+                this.orientation = "right";
+                break;
+            case "west":
+                this.orientation = "left";
+                break;
+        }
+    }
+    
     //Ejecutores de acciones
     
     public void chooseNewColor(){
-        //recurrer el queue de mensajes y actualizar los estimados/current
+        checkMessages();
         int remainingRed = objectiveRed-estimatedRed;
         int remainingBlue = objectiveBlue-estimatedBlue;
         int remainingGreen = objectiveGreen-estimatedGreen;
@@ -146,12 +165,18 @@ public class Agent implements Comparable<Agent> {
             currentColor = COLORGREEN;
             amountToHarvest = remainingGreen;
         }
+        Message colorChosen = new Message("tell","colorChosen",new MessageBody(currentColor,amountToHarvest),-1,id);  
+        sendMessage(colorChosen);
         //get nuevas acciones en base a getcurrentstate, ejecutarlas con executelistofactions
+        //esto es con maxq_qlearning.hierarchicalexecution pero no se bien como llamar a ese metodo
     }
     
     public void executeListOfActions(List<String> actions){
         for(String action : actions){
-            if(action.equalsIgnoreCase("moveforward") && prox.senseDistance()==1){ //cambiar esto a que tenga sentido con lo de ricardo
+            action = action.substring(3).toLowerCase();
+            boolean notMovement = action.equals("pickup") || action.equals("putdown");
+            setOrientation(action);
+            if(!notMovement && prox.senseDistance()==1){
                 if(avoidObstacle()){
                     //pedir replaneacion
                     System.out.println("Necesito un nuevo plan");
@@ -170,7 +195,7 @@ public class Agent implements Comparable<Agent> {
     
     private void executeAction(String action){
         switch(action.toLowerCase()){
-            case "turnleft":
+            /*case "turnleft":
                 turnLeft();
                 break;
             case "turnright":
@@ -181,23 +206,29 @@ public class Agent implements Comparable<Agent> {
                 break;
             case "movebackwards":
                 moveBackwards();
-                break;
-            case "moveleft":
+                break;*/
+            //case "moveleft":
+            case "west":
                 moveLeft();
                 break;
-            case "moveright":
+            //case "moveright":
+            case "east":
                 moveRight();
                 break;
-            case "moveup":
+            //case "moveup":
+            case "north":
                 moveUp();
                 break;
-            case "movedown":
+            //case "movedown":
+            case "south":
                 moveDown();
                 break;
-            case "harvestcolor":
+            //case "harvestcolor":
+            case "pickup":
                 harvestColor();
                 break;
-            case "depositcolor":
+            //case "depositcolor":
+            case "putdown":
                 depositColor();
                 break;
             default:
@@ -246,28 +277,28 @@ public class Agent implements Comparable<Agent> {
     private void moveForward(){
         switch(orientation){
             case "up":
-                if((positionY-1)>=0 && env.getMapObjectInPosition(positionX, positionY-1)== Environment.EMPTY){
+                if((positionY-1)>=0 && env.getMapObjectInPosition(positionX, positionY-1)!= Environment.OBSTACLE && env.getAgentInPostition(positionX, positionY-1)==Environment.EMPTY){
                     env.removeAgentFromPosition(positionX, positionY);
                     positionY--;
                     env.setAgentInPosition(positionX, positionY, id);
                 }
                 break;
             case "down":
-                if((positionY+1)<env.getMapSizeY() && env.getMapObjectInPosition(positionX, positionY+1)== Environment.EMPTY){
+                if((positionY+1)<env.getMapSizeY() && env.getMapObjectInPosition(positionX, positionY+1)!= Environment.OBSTACLE && env.getAgentInPostition(positionX, positionY+1)==Environment.EMPTY){
                     env.removeAgentFromPosition(positionX, positionY);
                     positionY++;
                     env.setAgentInPosition(positionX, positionY, id);
                 }
                 break;
             case "left":
-                if((positionX-1)>=0 && env.getMapObjectInPosition(positionX-1, positionY)== Environment.EMPTY){
+                if((positionX-1)>=0 && env.getMapObjectInPosition(positionX-1, positionY)!= Environment.OBSTACLE && env.getAgentInPostition(positionX-1, positionY)==Environment.EMPTY){
                     env.removeAgentFromPosition(positionX, positionY);
                     positionX--;
                     env.setAgentInPosition(positionX, positionY, id);
                 }
                 break;
             case "right":
-                if((positionX+1)<env.getMapSizeY() && env.getMapObjectInPosition(positionX+1, positionY)== Environment.EMPTY){
+                if((positionX+1)<env.getMapSizeY() && env.getMapObjectInPosition(positionX+1, positionY)!= Environment.OBSTACLE && env.getAgentInPostition(positionX+1, positionY)==Environment.EMPTY){
                     env.removeAgentFromPosition(positionX, positionY);
                     positionX++;
                     env.setAgentInPosition(positionX, positionY, id);
@@ -279,28 +310,28 @@ public class Agent implements Comparable<Agent> {
     private void moveBackwards(){
         switch(orientation){
             case "up":
-                if((positionY+1)<env.getMapSizeY() && env.getMapObjectInPosition(positionX, positionY+1)== Environment.EMPTY){
+                if((positionY+1)<env.getMapSizeY() && env.getMapObjectInPosition(positionX, positionY+1)!= Environment.OBSTACLE && env.getAgentInPostition(positionX, positionY+1)==Environment.EMPTY){
                     env.removeAgentFromPosition(positionX, positionY);
                     positionY++;
                     env.setAgentInPosition(positionX, positionY, id);
                 }
                 break;
             case "down":
-                if((positionY-1)>=0 && env.getMapObjectInPosition(positionX, positionY-1)== Environment.EMPTY){
+                if((positionY-1)>=0 && env.getMapObjectInPosition(positionX, positionY-1)!= Environment.OBSTACLE && env.getAgentInPostition(positionX, positionY-1)==Environment.EMPTY){
                     env.removeAgentFromPosition(positionX, positionY);
                     positionY--;
                     env.setAgentInPosition(positionX, positionY, id);
                 }
                 break;
             case "left":
-                if((positionX+1)<env.getMapSizeY() && env.getMapObjectInPosition(positionX+1, positionY)== Environment.EMPTY){
+                if((positionX+1)<env.getMapSizeY() && env.getMapObjectInPosition(positionX+1, positionY)!= Environment.OBSTACLE && env.getAgentInPostition(positionX+1, positionY)==Environment.EMPTY){
                     env.removeAgentFromPosition(positionX, positionY);
                     positionX++;
                     env.setAgentInPosition(positionX, positionY, id);
                 }
                 break;
             case "right":
-                if((positionX-1)>=0 && env.getMapObjectInPosition(positionX-1, positionY)== Environment.EMPTY){
+                if((positionX-1)>=0 && env.getMapObjectInPosition(positionX-1, positionY)!= Environment.OBSTACLE && env.getAgentInPostition(positionX-1, positionY)==Environment.EMPTY){
                     env.removeAgentFromPosition(positionX, positionY);
                     positionX--;
                     env.setAgentInPosition(positionX, positionY, id);
@@ -397,7 +428,8 @@ public class Agent implements Comparable<Agent> {
                     currentBlue+=colorAmount;
                     break;
             }
-            //mandar mensaje
+            Message colorDeposited = new Message("tell","colorDeposited",new MessageBody(currentColor,colorAmount),-1,id);  
+            sendMessage(colorDeposited);
             colorAmount = 0;
             currentColor = COLORNONE;
         }
@@ -449,9 +481,41 @@ public class Agent implements Comparable<Agent> {
     }
     
     public void receiveMessage(Message msg){
-        //meter a la queue concurrente de mensajes
+        messageQueue.add(msg);
     }
     
+    public void checkMessages() {
+        for (Message m : messageQueue) {
+            if (m.getType().equals("colorChosen")) {
+                MessageBody body = (MessageBody) m.getContent();
+                switch (body.getColor()) {
+                    case COLORRED:
+                        estimatedRed += body.getAmount();
+                        break;
+                    case COLORGREEN:
+                        estimatedGreen += body.getAmount();
+                        break;
+                    case COLORBLUE:
+                        estimatedBlue += body.getAmount();
+                        break;
+                }
+            }
+            if (m.getType().equals("colorDeposited")) {
+                MessageBody body = (MessageBody) m.getContent();
+                switch (body.getColor()) {
+                    case COLORRED:
+                        currentRed += body.getAmount();
+                        break;
+                    case COLORGREEN:
+                        currentGreen += body.getAmount();
+                        break;
+                    case COLORBLUE:
+                        currentBlue += body.getAmount();
+                        break;
+                }
+            }
+        }
+    }
     //Comunicacion
    
 }

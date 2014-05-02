@@ -27,14 +27,17 @@ public class ProyectoFinalMultiagentes {
         MessageServer msgSvr = new MessageServer();
         
         List<String> actions = new ArrayList<>();
-        actions.add("turnright");
-        actions.add("movebackwards");
-        actions.add("turnleft");
-        actions.add("turnleft");
-        actions.add("moveforward");
-        //actions.add("moveforward"); //descomentar para ver como en caso de que tenga en frente una pared, obstaculo o agente gira a la izquierda hasta encontrar un lugar al que pueda avanzar y avance a el
+        //actions.add("maxnorth");
+        //actions.add("maxwest");
+        //actions.add("maxsouth");
+        //actions.add("maxeast");
+        //actions.add("maxpickup");
+        //actions.add("maxwest");
+        //actions.add("maxputdown");
+        actions.add("maxsouth");
         
-        Agent ag = new Agent("right", 1, 2, env, msgSvr, 100,10,100,50);
+        Agent ag = new Agent("right", 1, 2, env, msgSvr, 100,10,10,50);
+        ag.chooseNewColor();
         msgSvr.addAgent(ag);
         System.out.println(env);
         ag.executeListOfActions(actions);
