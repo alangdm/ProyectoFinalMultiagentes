@@ -4,6 +4,8 @@
  */
 package proyectofinalmultiagentes;
 
+import State.Coord2D;
+import State.State;
 import java.util.List;
 
 /**
@@ -16,6 +18,7 @@ public class Agent implements Comparable<Agent> {
     public static final char COLORRED = 1;
     public static final char COLORGREEN = 2;
     public static final char COLORBLUE = 3;
+    private static int nextId = 1;
     
     private int id;
     /**
@@ -31,9 +34,18 @@ public class Agent implements Comparable<Agent> {
     private char currentColor;
     private int colorAmount;
     private int amountToHarvest;
+    private int objectiveRed;
+    private int objectiveGreen;
+    private int objectiveBlue;
+    private int estimatedRed;
+    private int estimatedGreen;
+    private int estimatedBlue;
+    private int currentRed;
+    private int currentGreen;
+    private int currentBlue;
 
-    public Agent(int id, String orientation, int positionX, int positionY, Environment env, MessageServer msgSvr, int capacity) {
-        this.id = id>0?id:1;
+    public Agent(String orientation, int positionX, int positionY, Environment env, MessageServer msgSvr, int capacity, int objectiveRed, int objectiveGreen, int objectiveBlue) {
+        this.id = nextId++;
         this.orientation = orientation.toLowerCase();
         this.positionX = positionX;
         this.positionY = positionY;
@@ -45,6 +57,11 @@ public class Agent implements Comparable<Agent> {
         this.currentColor = COLORNONE;
         this.colorAmount = 0;
         this.amountToHarvest = 0;
+        this.objectiveRed = objectiveRed;
+        this.objectiveGreen = objectiveGreen;
+        this.objectiveBlue = objectiveBlue;
+        estimatedRed = estimatedGreen = estimatedBlue = 0;
+        currentRed = currentGreen = currentBlue = 0;
     }
 
     //Getters
@@ -69,6 +86,27 @@ public class Agent implements Comparable<Agent> {
         return id;
     }
     
+    public State getCurrentState(){
+        Coord2D sourceCoord;
+        Coord2D containerCoord = env.getContainerPosition();
+        boolean carryingColor = colorAmount!=0;
+        switch(currentColor){
+            case COLORRED:
+                sourceCoord = env.getRedSourcePosition();
+                break;
+            case COLORGREEN:
+                sourceCoord = env.getGreenSourcePosition();
+                break;
+            case COLORBLUE:
+                sourceCoord = env.getBlueSourcePosition();
+                break;
+            case COLORNONE:
+            default:
+                sourceCoord = new Coord2D(0,0);
+                break;
+        }
+        return new State(new Coord2D(positionX,positionY), sourceCoord, carryingColor, null,containerCoord,carryingColor?containerCoord:sourceCoord);
+    }
     //End Getters
     
     //Overriden Methods
@@ -82,9 +120,35 @@ public class Agent implements Comparable<Agent> {
     
     //Ejecutores de acciones
     
+    public void chooseNewColor(){
+        //recurrer el queue de mensajes y actualizar los estimados/current
+        int remainingRed = objectiveRed-estimatedRed;
+        int remainingBlue = objectiveBlue-estimatedBlue;
+        int remainingGreen = objectiveGreen-estimatedGreen;
+        if(remainingRed>=remainingBlue){
+            if(remainingRed>=remainingGreen){
+                currentColor = COLORRED;
+                amountToHarvest = remainingRed;
+            }
+            else{
+                currentColor = COLORGREEN;
+                amountToHarvest = remainingGreen;
+            }
+        }
+        else if(remainingBlue>=remainingGreen){
+            currentColor = COLORBLUE;
+            amountToHarvest = remainingBlue;
+        }
+        else{
+            currentColor = COLORGREEN;
+            amountToHarvest = remainingGreen;
+        }
+        //get nuevas acciones en base a getcurrentstate, ejecutarlas con executelistofactions
+    }
+    
     public void executeListOfActions(List<String> actions){
         for(String action : actions){
-            if(action.equalsIgnoreCase("moveforward") && prox.senseDistance()==1){
+            if(action.equalsIgnoreCase("moveforward") && prox.senseDistance()==1){ //cambiar esto a que tenga sentido con lo de ricardo
                 if(avoidObstacle()){
                     //pedir replaneacion
                     System.out.println("Necesito un nuevo plan");
@@ -263,7 +327,7 @@ public class Agent implements Comparable<Agent> {
     }
     
     private void harvestColor(){
-        //OPCIONAL CREAR CLASE DE SOURCE TAMBIEN
+        //mandar mensaje a final de el if de cada case, despues del += de cada estimated
         switch(env.getMapObjectInPosition(positionX, positionY)){
             case Environment.REDSOURCE:
                 if(currentColor == COLORRED){
@@ -274,6 +338,7 @@ public class Agent implements Comparable<Agent> {
                         colorAmount = amountToHarvest;
                     }
                     amountToHarvest-=colorAmount;
+                    estimatedRed+=colorAmount;
                 }
                 else{
                     //FAIL
@@ -288,6 +353,7 @@ public class Agent implements Comparable<Agent> {
                         colorAmount = amountToHarvest;
                     }
                     amountToHarvest-=colorAmount;
+                    estimatedGreen+=colorAmount;
                 }
                 else{
                     //FAIL
@@ -302,6 +368,7 @@ public class Agent implements Comparable<Agent> {
                         colorAmount = amountToHarvest;
                     }
                     amountToHarvest-=colorAmount;
+                    estimatedBlue+=colorAmount;
                 }
                 else{
                     //FAIL
@@ -316,6 +383,18 @@ public class Agent implements Comparable<Agent> {
     private void depositColor(){
         if(env.getMapObjectInPosition(positionX, positionY)==Environment.CONTAINER){
             env.depositColorInContainer(currentColor, colorAmount);
+            switch(currentColor){
+                case COLORRED:
+                    currentRed+=colorAmount;
+                    break;
+                case COLORGREEN:
+                    currentGreen+=colorAmount;
+                    break;
+                case COLORBLUE:
+                    currentBlue+=colorAmount;
+                    break;
+            }
+            //mandar mensaje
             colorAmount = 0;
             currentColor = COLORNONE;
         }
@@ -348,10 +427,6 @@ public class Agent implements Comparable<Agent> {
         return prox.senseDistance();
     }
     
-    public void interpretMessage(Message msg){
-        //TO DO logica de interpretacion de mensaje
-    }
-    
     //Fin Otras Acciones
     
     //Comunicacion
@@ -371,7 +446,7 @@ public class Agent implements Comparable<Agent> {
     }
     
     public void receiveMessage(Message msg){
-        interpretMessage(msg);
+        //meter a la queue concurrente de mensajes
     }
     
     //Comunicacion

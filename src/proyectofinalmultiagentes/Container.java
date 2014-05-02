@@ -4,6 +4,7 @@
  */
 package proyectofinalmultiagentes;
 
+import State.Coord2D;
 import java.awt.Color;
 
 /**
@@ -14,11 +15,13 @@ public class Container {
     private int r;
     private int g;
     private int b;
+    private Coord2D position;
     
-    public Container(){
+    public Container(int positionX, int positionY){
         r=0;
         g=0;
         b=0;
+        position = new Coord2D(positionX, positionY);
     }
     
     public void depositColor(int color, int amount){
@@ -39,5 +42,17 @@ public class Container {
     
     public Color getContainerColor(){
         return new Color(r,g,b);
+    }
+
+    public Coord2D getPosition(){
+        return position;
+    }
+    
+    public int getX(){
+        return position.getX();
+    }
+    
+    public int getY(){
+        return position.getY();
     }
 }

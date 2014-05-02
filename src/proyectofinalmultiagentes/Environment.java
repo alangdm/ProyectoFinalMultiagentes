@@ -4,6 +4,7 @@
  */
 package proyectofinalmultiagentes;
 
+import State.Coord2D;
 import java.awt.Color;
 import java.util.Arrays;
 
@@ -27,8 +28,11 @@ public class Environment {
     private int mapSizeX;
     private int mapSizeY;
     private Container container;
+    private Source redSource;
+    private Source greenSource;
+    private Source blueSource;
 
-    public Environment(char[][] map) {
+    public Environment(char[][] map, Container container, Source redSource, Source greenSource, Source blueSource) {
         if(map.length >0){
             if(map[0].length>0){ //FALTA checar que todos los renglones del mapa sean del mismo tamano
                 this.map = map;
@@ -43,6 +47,14 @@ public class Environment {
         else{
             //ERROR mapa no puede tener 0 en una de sus dimensiones
         }
+        this.container = container;
+        map[container.getX()][container.getY()] = CONTAINER;
+        this.redSource = redSource;
+        map[redSource.getX()][redSource.getY()] = REDSOURCE;
+        this.blueSource = blueSource;
+        map[blueSource.getX()][blueSource.getY()] = BLUESOURCE;
+        this.greenSource = greenSource;
+        map[greenSource.getX()][greenSource.getY()] = GREENSOURCE;
     }
     
     public char[][] getMapCopy(){
@@ -91,6 +103,22 @@ public class Environment {
     
     public Color getContainerColor(){
         return container.getContainerColor();
+    }
+    
+    public Coord2D getContainerPosition(){
+        return container.getPosition();
+    }
+    
+    public Coord2D getRedSourcePosition(){
+        return redSource.getPosition();
+    }
+    
+    public Coord2D getGreenSourcePosition(){
+        return greenSource.getPosition();
+    }
+    
+    public Coord2D getBlueSourcePosition(){
+        return blueSource.getPosition();
     }
 
     @Override
