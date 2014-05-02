@@ -75,7 +75,7 @@ public class Main {
         
         /*ArrayList<State> result = learning.maxQQ(maxRoot, state);
         System.out.println(result);*/
-        for (int i = 0; i < 10000; i++) {
+        for (int i = 0; i < 3000; i++) {
             Coord2D start = genStart();
             Coord2D src = genSrc();
             Coord2D des = genDes();

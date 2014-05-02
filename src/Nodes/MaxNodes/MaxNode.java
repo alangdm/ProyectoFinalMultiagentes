@@ -13,6 +13,10 @@ public abstract class MaxNode<T> extends MaxQGraphNode{
     protected int maxActionValue =0;
     //protected float time = 1.0f-0.01f;
 
+    public int getMaxActionValue() {
+        return maxActionValue;
+    }
+
     public float getDiscountFactor() {
         return discountFactor;
     }

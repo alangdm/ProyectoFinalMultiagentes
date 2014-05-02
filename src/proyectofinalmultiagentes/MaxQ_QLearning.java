@@ -16,6 +16,7 @@ public class MaxQ_QLearning {
             int reward = ((PrimitiveMaxNode)i).reward(s);
             ((PrimitiveMaxNode)i).editV(s,(1-i.getAlpha())*((PrimitiveMaxNode)i).V(s) + i.getAlpha()*reward );
             secondary = ((PrimitiveMaxNode)i).execute(s);
+            s.setReward(reward);
             seq.add(s);
             i.reduceAlpha();
         }else{
@@ -48,5 +49,21 @@ public class MaxQ_QLearning {
             }
         }
         return seq;
+    }
+    public ArrayList<String> hierarchicalExecution(State s, MaxNode i){
+        ArrayList<String> res = new ArrayList<>();
+        if(i.isPrimitive()){
+            res.add(i.getName());
+            secondary = ((PrimitiveMaxNode)i).execute(s);
+        }else{
+            while(!i.terminal(s)){
+                int act = i.policy(s);
+                QNode next = i.getAction(act);
+                res.addAll(hierarchicalExecution(s, next.getChild()));
+                s = secondary;
+            }
+            
+        }
+        return res;
     }
 }

@@ -24,6 +24,10 @@ public class MaxQ_QAgent extends Agent implements Runnable{
     private State startState;
     private ArrayList<State> result;
 
+    public MaxQ_QLearning getLearning() {
+        return learning;
+    }
+
     public ArrayList<State> getResult() {
         return result;
     }
