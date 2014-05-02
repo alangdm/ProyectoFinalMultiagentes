@@ -63,6 +63,9 @@ public class Agent implements Comparable<Agent> {
         estimatedRed = estimatedGreen = estimatedBlue = 0;
         currentRed = currentGreen = currentBlue = 0;
     }
+    public Agent(){
+        
+    }
 
     //Getters
     

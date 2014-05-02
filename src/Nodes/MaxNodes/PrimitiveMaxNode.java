@@ -10,15 +10,37 @@ import Nodes.QNodes.QNode;
 import State.State;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import proyectofinalmultiagentes.Agent;
 
 /**
  *
  * @author Luis Ricardo
  */
 public abstract class PrimitiveMaxNode<T> extends MaxNode<T>{
-    public PrimitiveMaxNode(String name, ArrayList<QNode> children) {
+    
+    private Agent agent;
+    
+    protected ConcurrentMap<T, Float> V;
+    
+    public PrimitiveMaxNode(String name, ArrayList<QNode> children, Agent agent) {
         super(name, children);
-        V = new HashMap<>();
+        V = new ConcurrentHashMap<>();
+        this.agent = agent;
+    }
+    
+     public PrimitiveMaxNode(String name, ArrayList<QNode> children) {
+        super(name, children);
+        V = new ConcurrentHashMap<>();
+    }
+
+    public Agent getAgent() {
+        return agent;
+    }
+
+    public void setAgent(Agent agent) {
+        this.agent = agent;
     }
 
     @Override

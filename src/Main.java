@@ -3,6 +3,9 @@ import Nodes.MaxNodes.*;
 import Nodes.QNodes.*;
 import State.Coord2D;
 import State.State;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /*
@@ -72,7 +75,7 @@ public class Main {
         
         /*ArrayList<State> result = learning.maxQQ(maxRoot, state);
         System.out.println(result);*/
-        for (int i = 0; i < 10000; i++) {
+        for (int i = 0; i < 3000; i++) {
             Coord2D start = genStart();
             Coord2D src = genSrc();
             Coord2D des = genDes();
@@ -81,7 +84,18 @@ public class Main {
             //for (int j = 0; j < 5; j++) {
                 ArrayList<State> result = learning.maxQQ(maxRoot, state);
                 System.out.println(result.size() + ", lista: "+ result);
-            //}       
+            //}
+            int res = 0;
+            for (State state1 : result) {
+                res+= state1.getReward();
+            }
+             try {
+            BufferedWriter out = new BufferedWriter(new FileWriter("results.csv", true));
+                out.write(""+res+","+i);
+                out.newLine();
+                out.close();
+            } catch (IOException e) {}
+                
             /*try {
                     Thread.sleep(1000);
                 } catch(InterruptedException ex) {

@@ -1,6 +1,4 @@
 package Nodes.MaxNodes;
-
-
 import State.State;
 import Nodes.MaxQGraphNode;
 import Nodes.QNodes.QNode;
@@ -11,9 +9,13 @@ public abstract class MaxNode<T> extends MaxQGraphNode{
     protected ArrayList<QNode> actions;
     protected float alpha = 0.9f;
     protected float discountFactor =1f;
-    protected HashMap<T, Integer> time;
+    //protected HashMap<T, Integer> time;
     protected int maxActionValue =0;
     //protected float time = 1.0f-0.01f;
+
+    public int getMaxActionValue() {
+        return maxActionValue;
+    }
 
     public float getDiscountFactor() {
         return discountFactor;
@@ -22,7 +24,6 @@ public abstract class MaxNode<T> extends MaxQGraphNode{
     public ArrayList<QNode> getActions() {
         return actions;
     }
-    protected HashMap<T, Float> V;
 
     public float getAlpha(int action, State s) {
         return 0.99f/actions.get(action).time(s);

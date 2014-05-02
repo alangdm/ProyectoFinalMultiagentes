@@ -1,3 +1,5 @@
+package proyectofinalmultiagentes;
+
 
 import State.State;
 import Nodes.MaxNodes.MaxNode;
@@ -6,7 +8,6 @@ import Nodes.QNodes.QNode;
 import java.util.ArrayList;
 
 public class MaxQ_QLearning {
-    private ArrayList<Integer> rewards;
     private State secondary;
     public ArrayList<State> maxQQ(MaxNode i, State s){
         secondary = s;
@@ -49,7 +50,6 @@ public class MaxQ_QLearning {
         }
         return seq;
     }
-    
     public ArrayList<String> hierarchicalExecution(State s, MaxNode i){
         ArrayList<String> res = new ArrayList<>();
         if(i.isPrimitive()){
@@ -57,8 +57,7 @@ public class MaxQ_QLearning {
             secondary = ((PrimitiveMaxNode)i).execute(s);
         }else{
             while(!i.terminal(s)){
-                i.maxAction(s);
-                int act = i.getMaxActionValue();
+                int act = i.policy(s);
                 QNode next = i.getAction(act);
                 res.addAll(hierarchicalExecution(s, next.getChild()));
                 s = secondary;
