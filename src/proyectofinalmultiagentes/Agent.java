@@ -24,7 +24,7 @@ public class Agent implements Comparable<Agent> {
     public static final char COLORBLUE = 3;
     private static int nextId = 1;
     
-    private int id;
+    protected int id;
     /**
      * orientation puede ser "up", "down", "left", "right", es case insentitive
      */
@@ -173,13 +173,16 @@ public class Agent implements Comparable<Agent> {
     
     public boolean chooseNewColor(){
         checkMessages();
-        if(env.getContainerPosition().equals(new Coord2D(positionX, positionY))){
-            //moverte fuera del destination
-        }
+        /*if(env.getContainerPosition().equals(new Coord2D(positionX, positionY))){
+            while(prox.senseDistance()==1){
+                turnLeft();
+            }
+            moveForward();
+        }*/
         int remainingRed = objectiveRed-estimatedRed;
         int remainingBlue = objectiveBlue-estimatedBlue;
         int remainingGreen = objectiveGreen-estimatedGreen;
-        if((remainingRed+remainingBlue+remainingGreen)<=0)
+        if((remainingRed+remainingBlue+remainingGreen)<=0 || getObjectiveAccomplished())
             return false;
         if(remainingRed>=remainingBlue){
             if(remainingRed>=remainingGreen){
@@ -201,7 +204,7 @@ public class Agent implements Comparable<Agent> {
         }
         
         Message colorChosen = new Message("tell","colorChosen",new MessageBody(currentColor,capacity<amountToHarvest?capacity:amountToHarvest),-1,id);  
-        System.out.println("Color chosen color: " + (int)currentColor + " amount: "+(capacity<amountToHarvest?capacity:amountToHarvest));
+        System.out.println("Color chosen color: " + (int)currentColor + " amount: "+(capacity<amountToHarvest?capacity:amountToHarvest)+" agent: " +id);
         sendMessage(colorChosen);
         return true;
     }
@@ -468,7 +471,7 @@ public class Agent implements Comparable<Agent> {
     }
     
     private void depositColor(){
-        if(env.getMapObjectInPosition(positionX, positionY)==Environment.CONTAINER){
+        if(env.getMapObjectInPosition(positionX, positionY)==Environment.CONTAINER || colorAmount!=0){
             env.depositColorInContainer(currentColor, colorAmount);
             env.showSourcesAndContainers();
             switch(currentColor){
@@ -483,7 +486,7 @@ public class Agent implements Comparable<Agent> {
                     break;
             }
             Message colorDeposited = new Message("tell","colorDeposited",new MessageBody(currentColor,colorAmount),-1,id);  
-            System.out.println("Color Deposited color: "+(int)currentColor+" amount: "+colorAmount);
+            System.out.println("Color Deposited color: "+(int)currentColor+" amount: "+colorAmount + " id: "+id);
             sendMessage(colorDeposited);
         }
         else{
@@ -498,7 +501,7 @@ public class Agent implements Comparable<Agent> {
                     estimatedBlue-=colorAmount;
                     break;
             }
-            Message colorDeposited = new Message("tell","colorDeposited",new MessageBody(currentColor,-colorAmount),-1,id);  
+            Message colorDeposited = new Message("tell","colorDeposited",new MessageBody(currentColor,colorAmount==0?0:-colorAmount),-1,id);  
             sendMessage(colorDeposited);
         }
         colorAmount = 0;
@@ -558,11 +561,13 @@ public class Agent implements Comparable<Agent> {
     }
     
     public void receiveMessage(Message msg){
-        messageQueue.add(msg);
+        messageQueue.offer(msg);
     }
     
     public void checkMessages() {
-        for (Message m : messageQueue) {
+        while(messageQueue.peek()!=null){
+        //for (Message m : messageQueue) {
+            Message m = messageQueue.poll();
             if (m.getType().equals("colorChosen")) {
                 MessageBody body = (MessageBody) m.getContent();
                 switch (body.getColor()) {

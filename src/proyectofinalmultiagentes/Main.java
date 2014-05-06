@@ -208,7 +208,9 @@ public class Main {
         Thread ag2 = new Thread(recAgent2, "Thread de agente2");
         Thread ag3 = new Thread(recAgent3, "Thread de agente3");
         ag1.start();
+        Thread.sleep(100);
         ag2.start();
+        Thread.sleep(100);
         ag3.start();
         
         environment.showSourcesAndContainers();

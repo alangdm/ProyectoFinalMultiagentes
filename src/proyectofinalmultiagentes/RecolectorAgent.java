@@ -42,6 +42,7 @@ public class RecolectorAgent extends Agent implements Runnable{
         while (running) {
             if(getObjectiveAccomplished()){
                 env.removeAgentFromPosition(positionX, positionY);
+                System.out.println("Acabe " + id);
                 break;
             }
             chooseNewColor();
