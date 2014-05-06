@@ -109,12 +109,15 @@ public class Environment {
     }
     
     public synchronized void setAgentInPosition(int x, int y, int id){
-        agentsmap[x][y] = (char)id;
+        agentsmap[x][y]++;
         showSourcesAndContainers();
     }
     
     public synchronized void removeAgentFromPosition(int x, int y){
-        agentsmap[x][y] = EMPTY;
+        agentsmap[x][y]--;
+        if (agentsmap[x][y]<0) {
+            agentsmap[x][y] = 0;
+        }
         showSourcesAndContainers();
     }
     

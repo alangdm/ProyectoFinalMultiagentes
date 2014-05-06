@@ -45,9 +45,11 @@ public class RecolectorAgent extends Agent implements Runnable{
                 System.out.println("Acabe " + id);
                 break;
             }
-            chooseNewColor();
+            running = chooseNewColor();
             
         }
+        System.out.println("no pude escoger otro color "+id);
+        env.removeAgentFromPosition(this.positionX, positionY);
     }
 
     @Override

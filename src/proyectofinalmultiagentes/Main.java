@@ -195,13 +195,13 @@ public class Main {
         MessageServer server = new MessageServer();
         
         Coord2D temp = genSrc();
-        RecolectorAgent recAgent1 = new RecolectorAgent("left", temp.getY(), temp.getX(), environment, server, 10, 10, 10, 10, interfaz, maxRoot);
+        RecolectorAgent recAgent1 = new RecolectorAgent("left", temp.getY(), temp.getX(), environment, server, 100, 100, 100, 100, interfaz, maxRoot);
         server.addAgent(recAgent1);
         temp = genSrc();
-        RecolectorAgent recAgent2 = new RecolectorAgent("left", temp.getY(), temp.getX(), environment, server, 10, 10, 10, 10, interfaz, maxRoot);
+        RecolectorAgent recAgent2 = new RecolectorAgent("left", temp.getY(), temp.getX(), environment, server, 100, 100, 100, 100, interfaz, maxRoot);
         server.addAgent(recAgent2);
         temp = genSrc();
-        RecolectorAgent recAgent3 = new RecolectorAgent("left", temp.getY(), temp.getX(), environment, server, 10, 10, 10, 10, interfaz, maxRoot);
+        RecolectorAgent recAgent3 = new RecolectorAgent("left", temp.getY(), temp.getX(), environment, server, 100, 100, 100, 100, interfaz, maxRoot);
         server.addAgent(recAgent3);
         
         Thread ag1 = new Thread(recAgent1, "Thread de agente1");

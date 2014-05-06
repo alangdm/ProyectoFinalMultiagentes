@@ -180,29 +180,52 @@ public class Agent implements Comparable<Agent> {
             moveForward();
         }*/
         int remainingRed = objectiveRed-estimatedRed;
+        remainingRed = (remainingRed<0)?0:remainingRed;
         int remainingBlue = objectiveBlue-estimatedBlue;
+        remainingBlue = (remainingBlue<0)?0:remainingBlue;
         int remainingGreen = objectiveGreen-estimatedGreen;
-        if((remainingRed+remainingBlue+remainingGreen)<=0 || getObjectiveAccomplished())
-            return false;
-        if(remainingRed>=remainingBlue){
-            if(remainingRed>=remainingGreen){
+        remainingGreen = (remainingGreen<0)?0:remainingGreen;
+//        if((remainingRed+remainingBlue+remainingGreen)<=0 || getObjectiveAccomplished())
+//            return false;
+//        if(remainingRed>=remainingBlue){
+//            if(remainingRed>=remainingGreen){
+//                currentColor = COLORRED;
+//                amountToHarvest = remainingRed;
+//            }
+//            else{
+//                currentColor = COLORGREEN;
+//                amountToHarvest = remainingGreen;
+//            }
+//        }
+//        else if(remainingBlue>=remainingGreen){
+//            currentColor = COLORBLUE;
+//            amountToHarvest = remainingBlue;
+//        }
+//        else{
+//            currentColor = COLORGREEN;
+//            amountToHarvest = remainingGreen;
+//        }
+        switch (id) {
+            case 1:
                 currentColor = COLORRED;
                 amountToHarvest = remainingRed;
-            }
-            else{
+                break;
+            case 2:
                 currentColor = COLORGREEN;
                 amountToHarvest = remainingGreen;
-            }
+                break;
+            case 3:
+                currentColor = COLORBLUE;
+                amountToHarvest = remainingBlue;
+                break;
+            default:
+                throw new AssertionError();
         }
-        else if(remainingBlue>=remainingGreen){
-            currentColor = COLORBLUE;
-            amountToHarvest = remainingBlue;
+        if (amountToHarvest<=0) {
+            currentColor = COLORNONE;
+            amountToHarvest = 0;
+            return false;
         }
-        else{
-            currentColor = COLORGREEN;
-            amountToHarvest = remainingGreen;
-        }
-        
         Message colorChosen = new Message("tell","colorChosen",new MessageBody(currentColor,capacity<amountToHarvest?capacity:amountToHarvest),-1,id);  
         System.out.println("Color chosen color: " + (int)currentColor + " amount: "+(capacity<amountToHarvest?capacity:amountToHarvest)+" agent: " +id);
         sendMessage(colorChosen);
@@ -226,6 +249,8 @@ public class Agent implements Comparable<Agent> {
                 break;
             }
             else{*/
+            
+                System.out.println("accion["+id+"]: "+ action + " en [" + positionX + "][" + positionY + "]");
                 executeAction(action); 
             try {
                 Thread.sleep(100);
@@ -325,7 +350,7 @@ public class Agent implements Comparable<Agent> {
     private void moveForward(){
         switch(orientation){
             case "up":
-                if((positionY-1)>=0 && env.getMapObjectInPosition(positionX, positionY-1)!= Environment.OBSTACLE && env.getAgentInPostition(positionX, positionY-1)==Environment.EMPTY){
+                if((positionY-1)>=0 && env.getMapObjectInPosition(positionX, positionY-1)!= Environment.OBSTACLE){
                     env.removeAgentFromPosition(positionX, positionY);
                     interfaz.clean(new Coord2D(positionX,positionY));
                     positionY--;
@@ -334,7 +359,7 @@ public class Agent implements Comparable<Agent> {
                 }
                 break;
             case "down":
-                if((positionY+1)<env.getMapSizeY() && env.getMapObjectInPosition(positionX, positionY+1)!= Environment.OBSTACLE && env.getAgentInPostition(positionX, positionY+1)==Environment.EMPTY){
+                if((positionY+1)<env.getMapSizeY() && env.getMapObjectInPosition(positionX, positionY+1)!= Environment.OBSTACLE){
                     env.removeAgentFromPosition(positionX, positionY);
                     interfaz.clean(new Coord2D(positionX,positionY));
                     positionY++;
@@ -343,7 +368,7 @@ public class Agent implements Comparable<Agent> {
                 }
                 break;
             case "left":
-                if((positionX-1)>=0 && env.getMapObjectInPosition(positionX-1, positionY)!= Environment.OBSTACLE && env.getAgentInPostition(positionX-1, positionY)==Environment.EMPTY){
+                if((positionX-1)>=0 && env.getMapObjectInPosition(positionX-1, positionY)!= Environment.OBSTACLE){
                     env.removeAgentFromPosition(positionX, positionY);
                     interfaz.clean(new Coord2D(positionX,positionY));
                     positionX--;
@@ -352,7 +377,7 @@ public class Agent implements Comparable<Agent> {
                 }
                 break;
             case "right":
-                if((positionX+1)<env.getMapSizeY() && env.getMapObjectInPosition(positionX+1, positionY)!= Environment.OBSTACLE && env.getAgentInPostition(positionX+1, positionY)==Environment.EMPTY){
+                if((positionX+1)<env.getMapSizeY() && env.getMapObjectInPosition(positionX+1, positionY)!= Environment.OBSTACLE){
                     env.removeAgentFromPosition(positionX, positionY);
                     interfaz.clean(new Coord2D(positionX,positionY));
                     positionX++;
