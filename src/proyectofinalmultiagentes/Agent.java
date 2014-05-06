@@ -215,13 +215,18 @@ public class Agent implements Comparable<Agent> {
             boolean notMovement = action.equals("pickup") || action.equals("putdown");
             setOrientation(action);
             if(!notMovement && prox.senseDistance()==1){
-                try {
-                    Thread.sleep(1000);
+                for(int i =0;i<10;i++){
+                    try {
+                        Thread.sleep(1000);
 
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(Agent.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(Agent.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    if(prox.senseDistance()>1){
+                        executeAction(action); 
+                        break;
+                    }
                 }
-                executeAction(action); 
                 /*if(avoidObstacle()){
                     //pedir replaneacion
                     System.out.println("Evadiiiiiir");
@@ -245,6 +250,7 @@ public class Agent implements Comparable<Agent> {
     }
     
     protected void executeAction(String action){
+        System.out.println("Intente hacer " + action + " en " +positionX + ","+positionY);
         switch(action.toLowerCase()){
             /*case "turnleft":
                 turnLeft();
@@ -478,7 +484,7 @@ public class Agent implements Comparable<Agent> {
     }
     
     private void depositColor(){
-        if(env.getMapObjectInPosition(positionX, positionY)==Environment.CONTAINER || colorAmount!=0){
+        if(env.getMapObjectInPosition(positionX, positionY)==Environment.CONTAINER && colorAmount!=0){
             env.depositColorInContainer(currentColor, colorAmount);
             env.showSourcesAndContainers();
             switch(currentColor){

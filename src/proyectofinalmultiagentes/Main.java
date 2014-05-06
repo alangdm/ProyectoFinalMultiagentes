@@ -80,7 +80,7 @@ public class Main {
         for(int i=0;i<5;i++){
             map[i] = new char[State.getSize()];
         }
-        Source redSource = new Source(Agent.COLORRED, 0, 0);
+        Source redSource = new Source(Agent.COLORRED, 0, 3);
         Source greenSource = new Source(Agent.COLORGREEN, 3, 4);
         Source blueSource = new Source(Agent.COLORBLUE, 4, 2);
         Container container = new Container(3, 3);
@@ -194,14 +194,14 @@ public class Main {
         
         MessageServer server = new MessageServer();
         
-        Coord2D temp = genSrc();
-        RecolectorAgent recAgent1 = new RecolectorAgent("left", temp.getY(), temp.getX(), environment, server, 100, 100, 100, 100, interfaz, maxRoot);
+        Coord2D temp = genStart();
+        RecolectorAgent recAgent1 = new RecolectorAgent("left", temp.getY(), temp.getX(), environment, server, 100, 100, 190, 150, interfaz, maxRoot);
         server.addAgent(recAgent1);
-        temp = genSrc();
-        RecolectorAgent recAgent2 = new RecolectorAgent("left", temp.getY(), temp.getX(), environment, server, 100, 100, 100, 100, interfaz, maxRoot);
+        temp = genStart();
+        RecolectorAgent recAgent2 = new RecolectorAgent("left", temp.getY(), temp.getX(), environment, server, 50, 100, 190, 150, interfaz, maxRoot);
         server.addAgent(recAgent2);
-        temp = genSrc();
-        RecolectorAgent recAgent3 = new RecolectorAgent("left", temp.getY(), temp.getX(), environment, server, 100, 100, 100, 100, interfaz, maxRoot);
+        temp = genStart();
+        RecolectorAgent recAgent3 = new RecolectorAgent("left", temp.getY(), temp.getX(), environment, server, 80, 100, 190, 150, interfaz, maxRoot);
         server.addAgent(recAgent3);
         
         Thread ag1 = new Thread(recAgent1, "Thread de agente1");
@@ -231,7 +231,7 @@ public class Main {
     }
     public static Coord2D genSrc(){
         int s = 4;
-        int x[] ={0, 2, 4, 4};
+        int x[] ={3, 2, 4, 4};
         int y[] ={0, 4, 0, 3};
         return new Coord2D(x[(int)(Math.random() * s)],y[(int)(Math.random() * s)] );
     }
@@ -239,6 +239,7 @@ public class Main {
         int s = 4;
         int x[] ={0, 3, 3, 4};
         int y[] ={0, 4, 0, 3};
-        return new Coord2D(x[(int)(Math.random() * s)],y[(int)(Math.random() * s)] );
+        //return new Coord2D(x[(int)(Math.random() * s)],y[(int)(Math.random() * s)] );
+        return new Coord2D(3,3);
     }
 }

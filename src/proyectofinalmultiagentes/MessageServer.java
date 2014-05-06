@@ -47,7 +47,8 @@ public class MessageServer {
     
     public void broadcastMessage(Message msg){
         for(Agent a : agents.values()){
-            a.receiveMessage(msg);
+            if(a.getId() != msg.getSenderId())
+                a.receiveMessage(msg);
         }
     }
     
