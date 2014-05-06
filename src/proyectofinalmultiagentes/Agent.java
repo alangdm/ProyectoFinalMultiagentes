@@ -45,8 +45,9 @@ public class Agent implements Comparable<Agent> {
     private int currentGreen;
     private int currentBlue;
     private ConcurrentLinkedQueue<Message> messageQueue;
+    private Interfaz interfaz;
 
-    public Agent(String orientation, int positionX, int positionY, Environment env, MessageServer msgSvr, int capacity, int objectiveRed, int objectiveGreen, int objectiveBlue) {
+    public Agent(String orientation, int positionX, int positionY, Environment env, MessageServer msgSvr, int capacity, int objectiveRed, int objectiveGreen, int objectiveBlue, Interfaz interfaz) {
         this.id = nextId++;
         this.orientation = orientation.toLowerCase();
         this.positionX = positionX;
@@ -65,6 +66,7 @@ public class Agent implements Comparable<Agent> {
         estimatedRed = estimatedGreen = estimatedBlue = 0;
         currentRed = currentGreen = currentBlue = 0;
         messageQueue = new ConcurrentLinkedQueue<>();
+        this.interfaz = interfaz;
     }
     
     public Agent(){}
@@ -91,6 +93,10 @@ public class Agent implements Comparable<Agent> {
         return id;
     }
     
+    public static void resetId(){
+        nextId = 1;
+    }
+    
     public State getCurrentState(){
         Coord2D sourceCoord;
         Coord2D containerCoord = env.getContainerPosition();
@@ -110,7 +116,7 @@ public class Agent implements Comparable<Agent> {
                 sourceCoord = new Coord2D(0,0);
                 break;
         }
-        return new State(new Coord2D(positionX,positionY), sourceCoord, carryingColor, null,containerCoord,carryingColor?containerCoord:sourceCoord);
+        return new State(new Coord2D(positionX,positionY), sourceCoord, carryingColor, env.getWalls(),containerCoord,carryingColor?containerCoord:sourceCoord);
     }
     //End Getters
     
@@ -279,29 +285,37 @@ public class Agent implements Comparable<Agent> {
             case "up":
                 if((positionY-1)>=0 && env.getMapObjectInPosition(positionX, positionY-1)!= Environment.OBSTACLE && env.getAgentInPostition(positionX, positionY-1)==Environment.EMPTY){
                     env.removeAgentFromPosition(positionX, positionY);
+                    interfaz.clean(new Coord2D(positionX,positionY));
                     positionY--;
                     env.setAgentInPosition(positionX, positionY, id);
+                    interfaz.setTile(new Coord2D(positionX,positionY), Interfaz.getAgentColor(currentColor), Interfaz.AGENT);
                 }
                 break;
             case "down":
                 if((positionY+1)<env.getMapSizeY() && env.getMapObjectInPosition(positionX, positionY+1)!= Environment.OBSTACLE && env.getAgentInPostition(positionX, positionY+1)==Environment.EMPTY){
                     env.removeAgentFromPosition(positionX, positionY);
+                    interfaz.clean(new Coord2D(positionX,positionY));
                     positionY++;
                     env.setAgentInPosition(positionX, positionY, id);
+                    interfaz.setTile(new Coord2D(positionX,positionY), Interfaz.getAgentColor(currentColor), Interfaz.AGENT);
                 }
                 break;
             case "left":
                 if((positionX-1)>=0 && env.getMapObjectInPosition(positionX-1, positionY)!= Environment.OBSTACLE && env.getAgentInPostition(positionX-1, positionY)==Environment.EMPTY){
                     env.removeAgentFromPosition(positionX, positionY);
+                    interfaz.clean(new Coord2D(positionX,positionY));
                     positionX--;
                     env.setAgentInPosition(positionX, positionY, id);
+                    interfaz.setTile(new Coord2D(positionX,positionY), Interfaz.getAgentColor(currentColor), Interfaz.AGENT);
                 }
                 break;
             case "right":
                 if((positionX+1)<env.getMapSizeY() && env.getMapObjectInPosition(positionX+1, positionY)!= Environment.OBSTACLE && env.getAgentInPostition(positionX+1, positionY)==Environment.EMPTY){
                     env.removeAgentFromPosition(positionX, positionY);
+                    interfaz.clean(new Coord2D(positionX,positionY));
                     positionX++;
                     env.setAgentInPosition(positionX, positionY, id);
+                    interfaz.setTile(new Coord2D(positionX,positionY), Interfaz.getAgentColor(currentColor), Interfaz.AGENT);
                 }
                 break;
         }
@@ -417,6 +431,7 @@ public class Agent implements Comparable<Agent> {
     private void depositColor(){
         if(env.getMapObjectInPosition(positionX, positionY)==Environment.CONTAINER){
             env.depositColorInContainer(currentColor, colorAmount);
+            env.showSourcesAndContainers();
             switch(currentColor){
                 case COLORRED:
                     currentRed+=colorAmount;

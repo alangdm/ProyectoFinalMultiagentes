@@ -6,6 +6,7 @@ package proyectofinalmultiagentes;
 
 import State.Coord2D;
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -31,8 +32,11 @@ public class Environment {
     private Source redSource;
     private Source greenSource;
     private Source blueSource;
+    private Interfaz interfaz;
+    private ArrayList<Coord2D> walls;
 
-    public Environment(char[][] map, Container container, Source redSource, Source greenSource, Source blueSource) {
+    public Environment(char[][] map, Container container, Source redSource, Source greenSource, Source blueSource, Interfaz interfaz) {
+        this.interfaz = interfaz;
         if(map.length >0){
             if(map[0].length>0){ //FALTA checar que todos los renglones del mapa sean del mismo tamano
                 this.map = map;
@@ -47,6 +51,13 @@ public class Environment {
         else{
             //ERROR mapa no puede tener 0 en una de sus dimensiones
         }
+        
+        getWalls();
+        //recorrer el mapa y poner obstaculos en donde corresponda     
+        for(Coord2D wall:walls){
+            interfaz.setTile(wall, Interfaz.Obstaculo, null);
+        }
+        
         this.container = container;
         map[container.getX()][container.getY()] = CONTAINER;
         this.redSource = redSource;
@@ -55,6 +66,14 @@ public class Environment {
         map[blueSource.getX()][blueSource.getY()] = BLUESOURCE;
         this.greenSource = greenSource;
         map[greenSource.getX()][greenSource.getY()] = GREENSOURCE;
+        showSourcesAndContainers();
+    }
+    
+    public void showSourcesAndContainers(){
+        interfaz.setTile(container.getPosition(), container.getContainerColor(), Interfaz.Contenedor);
+        interfaz.setTile(redSource.getPosition(), Interfaz.Rojo, Interfaz.Fuente);
+        interfaz.setTile(blueSource.getPosition(), Interfaz.Azul, Interfaz.Fuente);
+        interfaz.setTile(greenSource.getPosition(), Interfaz.Verde, Interfaz.Fuente);
     }
     
     public char[][] getMapCopy(){
@@ -91,10 +110,12 @@ public class Environment {
     
     public void setAgentInPosition(int x, int y, int id){
         agentsmap[x][y] = (char)id;
+        showSourcesAndContainers();
     }
     
     public void removeAgentFromPosition(int x, int y){
         agentsmap[x][y] = EMPTY;
+        showSourcesAndContainers();
     }
     
     public void depositColorInContainer(int color, int amount){
@@ -119,6 +140,20 @@ public class Environment {
     
     public Coord2D getBlueSourcePosition(){
         return blueSource.getPosition();
+    }
+    
+    public ArrayList<Coord2D> getWalls(){
+        if(walls==null){
+            walls = new ArrayList<>();
+            for (int i = 0; i < map.length; i++) {
+                for (int j = 0; j < map[i].length; j++) {
+                    if(map[i][j]==OBSTACLE){
+                        walls.add(new Coord2D(i, j));
+                    }
+                }
+            }
+        }
+        return walls;
     }
 
     @Override
