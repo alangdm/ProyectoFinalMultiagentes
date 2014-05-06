@@ -76,6 +76,7 @@ public class Interfaz extends javax.swing.JFrame {
             JLabel label = labels[pos.getY()][pos.getX()];
             label.setBackground(color);
             label.setIcon(icon);
+            this.invalidate();
         }
     }
     

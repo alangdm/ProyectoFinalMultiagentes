@@ -55,7 +55,7 @@ public class Environment {
         getWalls();
         //recorrer el mapa y poner obstaculos en donde corresponda     
         for(Coord2D wall:walls){
-            interfaz.setTile(wall, Interfaz.Obstaculo, null);
+            interfaz.setTile(new Coord2D(wall.getY(),wall.getX()), Interfaz.Obstaculo, null);
         }
         
         this.container = container;
@@ -100,29 +100,29 @@ public class Environment {
         return mapSizeY;
     }
     
-    public char getMapObjectInPosition(int x, int y) {
+    public synchronized char getMapObjectInPosition(int x, int y) {
         return map[x][y];
     }
     
-    public char getAgentInPostition(int x, int y){
+    public synchronized char getAgentInPostition(int x, int y){
         return agentsmap[x][y];
     }
     
-    public void setAgentInPosition(int x, int y, int id){
+    public synchronized void setAgentInPosition(int x, int y, int id){
         agentsmap[x][y] = (char)id;
         showSourcesAndContainers();
     }
     
-    public void removeAgentFromPosition(int x, int y){
+    public synchronized void removeAgentFromPosition(int x, int y){
         agentsmap[x][y] = EMPTY;
         showSourcesAndContainers();
     }
     
-    public void depositColorInContainer(int color, int amount){
+    public synchronized void depositColorInContainer(int color, int amount){
         container.depositColor(color, amount);
     }
     
-    public Color getContainerColor(){
+    public synchronized Color getContainerColor(){
         return container.getContainerColor();
     }
     
@@ -148,7 +148,7 @@ public class Environment {
             for (int i = 0; i < map.length; i++) {
                 for (int j = 0; j < map[i].length; j++) {
                     if(map[i][j]==OBSTACLE){
-                        walls.add(new Coord2D(i, j));
+                        walls.add(new Coord2D(j, i));
                     }
                 }
             }

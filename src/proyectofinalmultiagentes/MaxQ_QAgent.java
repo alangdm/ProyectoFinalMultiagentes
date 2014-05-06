@@ -3,8 +3,6 @@ package proyectofinalmultiagentes;
 import Nodes.MaxNodes.MaxNode;
 import State.State;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /*
  * To change this template, choose Tools | Templates
@@ -32,9 +30,9 @@ public class MaxQ_QAgent extends Agent implements Runnable{
         return result;
     }
     
-    public MaxQ_QAgent(int id, String orientation, int positionX, int positionY, Environment env, MessageServer msgSvr, int capacity,  MaxNode maxRoot) {
+    public MaxQ_QAgent(String orientation, int positionX, int positionY, Environment env, MessageServer msgSvr, int capacity, int objectiveRed, int objectiveGreen, int objectiveBlue, Interfaz interfaz, MaxNode maxRoot) {
        //super(id, orientation, positionX, positionY, env, msgSvr, capacity);
-       super();
+       super(orientation, positionX, positionY, env, msgSvr, capacity, objectiveRed, objectiveGreen, objectiveBlue, interfaz);
        this.maxRoot = maxRoot;
        this.result = new ArrayList<>();
        learning = new MaxQ_QLearning();
@@ -50,6 +48,12 @@ public class MaxQ_QAgent extends Agent implements Runnable{
         //while (running) {
             if (runMaxQQ) {
                   result = learning.maxQQ(maxRoot, startState);
+                  for(State state : result){
+                      String action = state.getAction();
+                      if(!action.equalsIgnoreCase("maxpickup") && !action.equalsIgnoreCase("maxputdown")){
+                          executeAction(state.getAction());
+                      }
+                  }
                   runMaxQQ =false;
             }
             else {
