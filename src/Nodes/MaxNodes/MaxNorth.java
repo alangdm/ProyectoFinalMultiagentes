@@ -24,7 +24,7 @@ public class MaxNorth extends PrimitiveMaxNode<Integer>{
     @Override
     public State execute(State s) {
         if(!(s.getCab().getX() == 0)){
-            return new State(new Coord2D(s.getCab().getX()-1, s.getCab().getY()), s.getPas(), s.isInCab(), s.getWalls(), s.getDest(), s.getCurrentDest());
+            return new State(new Coord2D(s.getCab().getX()-1, s.getCab().getY()), s.getPas(), s.isInCab(), s.getWalls(), s.getDest(), s.getCurrentDest(), s.isPicked());
         }
         return s;
     }

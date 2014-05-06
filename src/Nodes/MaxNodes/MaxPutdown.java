@@ -23,7 +23,7 @@ public class MaxPutdown extends PrimitiveMaxNode<Integer>{
     @Override
     public State execute(State s) {
         if(s.getCab().equals(s.getDest()) && s.isInCab()){
-            return new State(s.getCab(), s.getPas(), false, s.getWalls(), s.getDest(), s.getCurrentDest());
+            return new State(s.getCab(), s.getPas(), false, s.getWalls(), s.getDest(), s.getCurrentDest(), s.isPicked());
         }else{
             return s;
         }

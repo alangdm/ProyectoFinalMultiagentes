@@ -79,7 +79,7 @@ public class Main {
             Coord2D start = genStart();
             Coord2D src = genSrc();
             Coord2D des = genDes();
-            State state = new State(start,src, false,new  ArrayList<Coord2D>(),des, src);
+            State state = new State(start,src, false,new  ArrayList<Coord2D>(),des, src, false);
             System.out.println("Start: "+start + "\nSource: "+ src+"\nDestination: " + des + "\nBest: " + (man(start,src) + man(src,des) + 2) +"\nCurrent: ");
             //for (int j = 0; j < 5; j++) {
                 ArrayList<State> result = learning.maxQQ(maxRoot, state);

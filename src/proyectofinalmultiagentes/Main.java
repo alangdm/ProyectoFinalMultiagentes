@@ -220,7 +220,7 @@ public class Main {
         Coord2D start = genStart();
         Coord2D src = genSrc();
         Coord2D des = genDes();
-        State state = new State(start,src, false,new  ArrayList<Coord2D>(),des, src);
+        State state = new State(start,src, false,new  ArrayList<Coord2D>(),des, src, false);
         return state;
     }
     public static int man(Coord2D start, Coord2D finish){

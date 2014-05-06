@@ -139,7 +139,7 @@ public class Agent implements Comparable<Agent> {
         sourceCoord=new Coord2D(sourceCoord.getY(),sourceCoord.getX());
         containerCoord = new Coord2D(containerCoord.getY(),containerCoord.getX());
         //return new State(new Coord2D(positionY,positionX), sourceCoord, carryingColor, env.getWalls(),containerCoord,carryingColor?containerCoord:sourceCoord);
-        return new State(new Coord2D(positionY,positionX), sourceCoord, carryingColor, env.getWalls(),containerCoord,sourceCoord);
+        return new State(new Coord2D(positionY,positionX), sourceCoord, carryingColor, env.getWalls(),containerCoord,sourceCoord, false);
     }
     //End Getters
     

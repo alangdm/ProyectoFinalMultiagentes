@@ -24,7 +24,7 @@ public class MaxPickup extends PrimitiveMaxNode<Integer>{
         if(!s.getCab().equals(s.getSource())){
             return s;
         }else{
-            return new State(s.getCab(), s.getPas(), true, s.getWalls(), s.getDest(), s.getCurrentDest());
+            return new State(s.getCab(), s.getPas(), true, s.getWalls(), s.getDest(), s.getCurrentDest(), true);
         }
     }
 

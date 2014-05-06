@@ -20,6 +20,11 @@ public class State {
     private Coord2D dest;
     private boolean inCab;
     private int reward;
+    private boolean picked;
+
+    public boolean isPicked() {
+        return picked;
+    }
     String action;
 
     public String getAction() {
@@ -77,7 +82,7 @@ public class State {
         return walls;
     }
 
-    public State(Coord2D cab, Coord2D pas, boolean inCab, ArrayList<Coord2D> walls,Coord2D dest, Coord2D currentDest) {
+    public State(Coord2D cab, Coord2D pas, boolean inCab, ArrayList<Coord2D> walls,Coord2D dest, Coord2D currentDest, boolean pick) {
         this.cab = cab;
         this.pas = pas;
         this.inCab = inCab;
@@ -85,6 +90,7 @@ public class State {
         this.dest = dest;
         this.currentDest= currentDest;
         this.source=pas;
+        this.picked = pick;
     }
     
     public String toString(){
