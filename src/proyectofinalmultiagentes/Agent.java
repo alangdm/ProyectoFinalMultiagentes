@@ -48,7 +48,7 @@ public class Agent implements Comparable<Agent> {
     private int currentGreen;
     private int currentBlue;
     private ConcurrentLinkedQueue<Message> messageQueue;
-    private Interfaz interfaz;
+    protected Interfaz interfaz;
 
     public Agent(String orientation, int positionX, int positionY, Environment env, MessageServer msgSvr, int capacity, int objectiveRed, int objectiveGreen, int objectiveBlue, Interfaz interfaz) {
         this.id = nextId++;
@@ -182,7 +182,7 @@ public class Agent implements Comparable<Agent> {
         int remainingRed = objectiveRed-estimatedRed;
         int remainingBlue = objectiveBlue-estimatedBlue;
         int remainingGreen = objectiveGreen-estimatedGreen;
-        if((remainingRed+remainingBlue+remainingGreen)<=0 || getObjectiveAccomplished())
+        if((remainingRed<=0 && remainingBlue<=0 && remainingGreen<=0) || getObjectiveAccomplished())
             return false;
         if(remainingRed>=remainingBlue){
             if(remainingRed>=remainingGreen){
@@ -214,8 +214,15 @@ public class Agent implements Comparable<Agent> {
             action = action.substring(3).toLowerCase();
             boolean notMovement = action.equals("pickup") || action.equals("putdown");
             setOrientation(action);
-            /*if(!notMovement && prox.senseDistance()==1){
-                if(avoidObstacle()){
+            if(!notMovement && prox.senseDistance()==1){
+                try {
+                    Thread.sleep(1000);
+
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Agent.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                executeAction(action); 
+                /*if(avoidObstacle()){
                     //pedir replaneacion
                     System.out.println("Evadiiiiiir");
                 }
@@ -223,17 +230,17 @@ public class Agent implements Comparable<Agent> {
                     //enviar mensaje de encierro
                     System.out.println("Estoy encerrado");
                 }
-                break;
+                break;*/
             }
-            else{*/
+            else{
                 executeAction(action); 
-            try {
-                Thread.sleep(100);
-            
-            } catch (InterruptedException ex) {
-                Logger.getLogger(Agent.class.getName()).log(Level.SEVERE, null, ex);
+                try {
+                    Thread.sleep(300+(long) (Math.random()*500));
+
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Agent.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
-            //}
         }
     }
     

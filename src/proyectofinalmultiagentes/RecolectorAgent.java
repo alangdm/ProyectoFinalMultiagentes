@@ -5,6 +5,7 @@
 package proyectofinalmultiagentes;
 
 import Nodes.MaxNodes.MaxNode;
+import State.Coord2D;
 import State.State;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,10 +43,18 @@ public class RecolectorAgent extends Agent implements Runnable{
         while (running) {
             if(getObjectiveAccomplished()){
                 env.removeAgentFromPosition(positionX, positionY);
-                System.out.println("Acabe " + id);
+                interfaz.clean(new Coord2D(positionX, positionY));
+                System.out.println("Acabe1 " + id);
+                env.showSourcesAndContainers();
                 break;
             }
-            chooseNewColor();
+            if(!chooseNewColor()){
+                env.removeAgentFromPosition(positionX, positionY);
+                interfaz.clean(new Coord2D(positionX, positionY));
+                System.out.println("Acabe2 " + id);
+                env.showSourcesAndContainers();
+                break;
+            }
             
         }
     }
