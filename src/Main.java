@@ -7,6 +7,8 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -72,28 +74,32 @@ public class Main {
         
         MaxNode maxRoot = new Root("MaxRoot", root);
         
+        BufferedWriter out = null;
+        try {
+                out = new BufferedWriter(new FileWriter("results.csv", false));
+            } catch (IOException e) {}
         
         /*ArrayList<State> result = learning.maxQQ(maxRoot, state);
         System.out.println(result);*/
-        for (int i = 0; i < 10000; i++) {
+        for (int i = 0; i < 16000; i++) {
             Coord2D start = genStart();
             Coord2D src = genSrc();
             Coord2D des = genDes();
             State state = new State(start,src, false,new  ArrayList<Coord2D>(),des, src);
-            System.out.println("Start: "+start + "\nSource: "+ src+"\nDestination: " + des + "\nBest: " + (man(start,src) + man(src,des) + 2) +"\nCurrent: ");
+            //System.out.println("Start: "+start + "\nSource: "+ src+"\nDestination: " + des + "\nBest: " + (man(start,src) + man(src,des) + 2) +"\nCurrent: ");
             //for (int j = 0; j < 5; j++) {
                 ArrayList<State> result = learning.maxQQ(maxRoot, state);
-                System.out.println(result.size() + ", lista: "+ result);
+                //System.out.println(result.size() + ", lista: "+ result);
             //}
             int res = 0;
             for (State state1 : result) {
                 res+= state1.getReward();
             }
              try {
-            BufferedWriter out = new BufferedWriter(new FileWriter("results.csv", true));
+            //BufferedWriter out = new BufferedWriter(new FileWriter("results.csv", true));
                 out.write(""+res+","+i);
                 out.newLine();
-                out.close();
+                //out.close();
             } catch (IOException e) {}
                 
             /*try {
@@ -102,13 +108,18 @@ public class Main {
                     Thread.currentThread().interrupt();
             }*/
         }
+        try {
+            out.close();
+        } catch (IOException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
     }
     public static int man(Coord2D start, Coord2D finish){
         return Math.abs(start.getX()-finish.getX())+ Math.abs(start.getY()-finish.getY()) ;
     }
     public static Coord2D genStart(){
-        return new Coord2D((int)(Math.random() * 5), (int)(Math.random() * 5));
+        return new Coord2D((int)(Math.random() * 8), (int)(Math.random() * 8));
     }
     public static Coord2D genSrc(){
         int s = 4;
