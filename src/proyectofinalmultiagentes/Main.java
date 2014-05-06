@@ -107,12 +107,12 @@ public class Main {
             ag2.start();
             ag3.start();
             
-            int res=0;
+            int res;
             
             ag1.join();
             //System.out.println("Agente 1 iteracion: "+ i + "\n"+"Start: "+state1.getCab() + "\nSource: "+ state1.getSource()+"\nDestination: " + state1.getDest() + "\nBest: " + (man(state1.getCab(), state1.getSource()) + man( state1.getSource(),state1.getDest()) + 2) +"\nCurrent: ");
             //ArrayList<State> result = learning.maxQQ(maxRoot, state);
-            //System.out.println(agente1.getResult().size() + ", lista: "+ agente1.getResult());
+            System.out.println(agente1.getResult().size() + ", lista: "+ agente1.getResult());
             
             res=0;
             for (State s : agente1.getResult()) {

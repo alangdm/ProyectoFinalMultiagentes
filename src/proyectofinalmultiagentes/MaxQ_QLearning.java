@@ -50,4 +50,20 @@ public class MaxQ_QLearning {
         }
         return seq;
     }
+    public ArrayList<String> hierarchicalExecution(State s, MaxNode i){
+        ArrayList<String> res = new ArrayList<>();
+        if(i.isPrimitive()){
+            res.add(i.getName());
+            secondary = ((PrimitiveMaxNode)i).execute(s);
+        }else{
+            while(!i.terminal(s)){
+                int act = i.policy(s);
+                QNode next = i.getAction(act);
+                res.addAll(hierarchicalExecution(s, next.getChild()));
+                s = secondary;
+            }
+            
+        }
+        return res;
+    }
 }
