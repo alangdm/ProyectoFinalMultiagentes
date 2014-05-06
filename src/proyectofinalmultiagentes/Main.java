@@ -102,7 +102,7 @@ public class Main {
         } catch (IOException ex) {
         Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
-        for (int i = 0; i < 3000; i++) {
+        for (int i = 0; i < 10000; i++) {
             
             State state1 = initState();
             State state2 = initState();

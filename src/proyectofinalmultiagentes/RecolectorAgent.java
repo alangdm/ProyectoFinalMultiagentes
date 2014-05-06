@@ -57,16 +57,16 @@ public class RecolectorAgent extends Agent implements Runnable{
         if(super.chooseNewColor()){
             State state = getCurrentState();
             
-            //List<String> actions = learning.hierarchicalExecution(state, maxRoot); // aqui puede ser mejor llamar a maxQ
+            List<String> actions = learning.hierarchicalExecution(state, maxRoot); // aqui puede ser mejor llamar a maxQ
             
             
-            ArrayList<State> states = learning.maxQQ(maxRoot, state);
+            /*ArrayList<State> states = learning.maxQQ(maxRoot, state);
             
             List<String> actions = new ArrayList<>();
             
             for (int i = states.size()-1;i>=0;i--) {
                 actions.add(states.get(i).getAction());
-            }
+            }*/
             
             executeListOfActions(actions);
             return true;
