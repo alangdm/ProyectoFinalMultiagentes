@@ -30,7 +30,7 @@ public class Interfaz extends javax.swing.JFrame {
     public static final Color Azul = new Color(127, 139, 212);
     public static final Color Obstaculo = new Color(62, 62, 62);
     
-    public static final ImageIcon Agent = new ImageIcon("agent.png");
+    public static final ImageIcon AGENT = new ImageIcon("agent.png");
     public static final ImageIcon Fuente = new ImageIcon("fuente.png");
     public static final ImageIcon Contenedor = new ImageIcon("container.png");
     
@@ -51,7 +51,7 @@ public class Interfaz extends javax.swing.JFrame {
         GridLayout myGrid = new GridLayout(rows, cols);
         this.setLayout(myGrid);
         for (int row = 0; row < rows; row++) {
-            for (int col = 0; col < rows; col++) {
+            for (int col = 0; col < cols; col++) {
                 JLabel label = new JLabel();
                 labels[row][col] = label;
                 label.setOpaque(true);
@@ -76,6 +76,19 @@ public class Interfaz extends javax.swing.JFrame {
             JLabel label = labels[pos.getY()][pos.getX()];
             label.setBackground(color);
             label.setIcon(icon);
+        }
+    }
+    
+    public static Color getAgentColor(char color){
+        switch(color){
+            case Agent.COLORBLUE:
+                return Azul;
+            case Agent.COLORGREEN:
+                return Verde;
+            case Agent.COLORRED:
+                return Rojo;
+            default:
+                return Vacio;
         }
     }
     
@@ -112,7 +125,7 @@ public class Interfaz extends javax.swing.JFrame {
                 in.setTile(new Coord2D(0, 0), Verde, null);
                 in.setTile(new Coord2D(1, 1), Verde, null);
                 in.clean(new Coord2D(1,1));
-                in.setTile(new Coord2D(1, 1), Rojo, Agent);
+                in.setTile(new Coord2D(1, 1), Rojo, AGENT);
                 in.setTile(new Coord2D(2, 2), Azul, Fuente);
                 in.setTile(new Coord2D(3, 3), Verde, Contenedor);
                 in.setTile(new Coord2D(4, 4), Gris, null);
