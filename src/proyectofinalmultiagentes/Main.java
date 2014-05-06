@@ -74,9 +74,9 @@ public class Main {
         
         MaxNode maxRoot = new Root("MaxRoot", root);
         
-        MaxQ_QAgent agente1 = new MaxQ_QAgent(0, "Caca", 0, 0, null, null, 0, maxRoot);
-        MaxQ_QAgent agente2 = new MaxQ_QAgent(0,"Caca", 0, 0, null, null, 0, maxRoot);
-        MaxQ_QAgent agente3 = new MaxQ_QAgent(0, "Caca", 0, 0, null, null, 0, maxRoot);
+        MaxQ_QAgent agente1 = new MaxQ_QAgent("Caca", 0, 0, null, null, 0, 0, 0, 0, null, maxRoot);
+        MaxQ_QAgent agente2 = new MaxQ_QAgent("Caca", 0, 0, null, null, 0, 0, 0, 0, null, maxRoot);
+        MaxQ_QAgent agente3 = new MaxQ_QAgent("Caca", 0, 0, null, null, 0, 0, 0, 0, null, maxRoot);
         
         for (int i = 0; i < 3000; i++) {
             

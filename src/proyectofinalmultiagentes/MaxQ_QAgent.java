@@ -32,9 +32,9 @@ public class MaxQ_QAgent extends Agent implements Runnable{
         return result;
     }
     
-    public MaxQ_QAgent(int id, String orientation, int positionX, int positionY, Environment env, MessageServer msgSvr, int capacity,  MaxNode maxRoot) {
+    public MaxQ_QAgent(String orientation, int positionX, int positionY, Environment env, MessageServer msgSvr, int capacity, int objectiveRed, int objectiveGreen, int objectiveBlue, Interfaz interfaz, MaxNode maxRoot) {
        //super(id, orientation, positionX, positionY, env, msgSvr, capacity);
-       super();
+       super(orientation, positionX, positionY, env, msgSvr, capacity, objectiveRed, objectiveGreen, objectiveBlue, interfaz);
        this.maxRoot = maxRoot;
        this.result = new ArrayList<>();
        learning = new MaxQ_QLearning();
