@@ -93,6 +93,10 @@ public class Agent implements Comparable<Agent> {
         return id;
     }
     
+    public static void resetId(){
+        nextId = 1;
+    }
+    
     public State getCurrentState(){
         Coord2D sourceCoord;
         Coord2D containerCoord = env.getContainerPosition();
@@ -112,7 +116,7 @@ public class Agent implements Comparable<Agent> {
                 sourceCoord = new Coord2D(0,0);
                 break;
         }
-        return new State(new Coord2D(positionX,positionY), sourceCoord, carryingColor, null,containerCoord,carryingColor?containerCoord:sourceCoord);
+        return new State(new Coord2D(positionX,positionY), sourceCoord, carryingColor, env.getWalls(),containerCoord,carryingColor?containerCoord:sourceCoord);
     }
     //End Getters
     

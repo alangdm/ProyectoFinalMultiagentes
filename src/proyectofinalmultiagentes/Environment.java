@@ -6,6 +6,7 @@ package proyectofinalmultiagentes;
 
 import State.Coord2D;
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -32,6 +33,7 @@ public class Environment {
     private Source greenSource;
     private Source blueSource;
     private Interfaz interfaz;
+    private ArrayList<Coord2D> walls;
 
     public Environment(char[][] map, Container container, Source redSource, Source greenSource, Source blueSource, Interfaz interfaz) {
         this.interfaz = interfaz;
@@ -50,13 +52,10 @@ public class Environment {
             //ERROR mapa no puede tener 0 en una de sus dimensiones
         }
         
-        //recorrer el mapa y poner obstaculos en donde corresponda
-        for (int i = 0; i < map.length; i++) {
-            for (int j = 0; j < map[i].length; j++) {
-                if(map[i][j]==OBSTACLE){
-                    interfaz.setTile(new Coord2D(i, j), Interfaz.Obstaculo, null);
-                }
-            }
+        getWalls();
+        //recorrer el mapa y poner obstaculos en donde corresponda     
+        for(Coord2D wall:walls){
+            interfaz.setTile(wall, Interfaz.Obstaculo, null);
         }
         
         this.container = container;
@@ -141,6 +140,20 @@ public class Environment {
     
     public Coord2D getBlueSourcePosition(){
         return blueSource.getPosition();
+    }
+    
+    public ArrayList<Coord2D> getWalls(){
+        if(walls==null){
+            walls = new ArrayList<>();
+            for (int i = 0; i < map.length; i++) {
+                for (int j = 0; j < map[i].length; j++) {
+                    if(map[i][j]==OBSTACLE){
+                        walls.add(new Coord2D(i, j));
+                    }
+                }
+            }
+        }
+        return walls;
     }
 
     @Override
