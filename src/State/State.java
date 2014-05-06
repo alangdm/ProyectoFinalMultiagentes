@@ -20,6 +20,15 @@ public class State {
     private Coord2D dest;
     private boolean inCab;
     private int reward;
+    String action;
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
 
     public int getReward() {
         return reward;

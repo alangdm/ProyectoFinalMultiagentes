@@ -17,6 +17,7 @@ public class MaxQ_QLearning {
             ((PrimitiveMaxNode)i).editV(s,(1-i.getAlpha())*((PrimitiveMaxNode)i).V(s) + i.getAlpha()*reward );
             secondary = ((PrimitiveMaxNode)i).execute(s);
             s.setReward(reward);
+            s.setAction(i.getName());
             seq.add(s);
             i.reduceAlpha();
         }else{
