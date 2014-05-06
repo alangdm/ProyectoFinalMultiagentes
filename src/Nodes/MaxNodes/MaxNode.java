@@ -60,6 +60,13 @@ public abstract class MaxNode<T> extends MaxQGraphNode{
             return (int)(Math.random() * actions.size());
         }
     }
+    
+    public int maxPolicy(State s) {//egreedy de forma glie
+        maxAction(s);
+        //System.out.println("Accion maxima vale: " +maxAction(s));
+        return maxActionValue;
+    }
+    
     public float V1(State s){
         if(this.isPrimitive()){
             return((PrimitiveMaxNode)this).V(s);

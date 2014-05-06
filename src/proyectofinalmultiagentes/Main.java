@@ -9,6 +9,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -102,7 +103,7 @@ public class Main {
         } catch (IOException ex) {
         Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
-        for (int i = 0; i < 10000; i++) {
+        for (int i = 0; i < 5000; i++) {
             
             State state1 = initState();
             State state2 = initState();
@@ -138,7 +139,7 @@ public class Main {
             //ArrayList<State> result = learning.maxQQ(maxRoot, state);
             System.out.println(agente1.getResult().size() + ", lista: "+ agente1.getResult());
             if(i>2900){
-                System.out.println("Politica jerarquica: "+ agente1.getLearning().hierarchicalExecution(state1, maxRoot));
+               // System.out.println("Politica jerarquica: "+ agente1.getLearning().hierarchicalExecution(state1, maxRoot));
             }
             
             res=0;
@@ -233,12 +234,23 @@ public class Main {
         int s = 4;
         int x[] ={0, 2, 4, 4};
         int y[] ={0, 4, 0, 3};
-        return new Coord2D(x[(int)(Math.random() * s)],y[(int)(Math.random() * s)] );
+        
+        List<Coord2D> arr = new ArrayList<>();
+        
+        Coord2D f1 = new Coord2D(0, 0);
+        Coord2D f2 = new Coord2D(2, 4);
+        Coord2D f3 = new Coord2D(4, 3);
+        arr.add(f1);
+        arr.add(f2);
+        arr.add(f3);
+        
+        return arr.get((int)(Math.random() * 3));
     }
     public static Coord2D genDes(){
         int s = 4;
         int x[] ={0, 3, 3, 4};
-        int y[] ={0, 4, 0, 3};
-        return new Coord2D(x[(int)(Math.random() * s)],y[(int)(Math.random() * s)] );
+        int y[] ={3, 4, 0, 3};
+        //return new Coord2D(x[(int)(Math.random() * s)],y[(int)(Math.random() * s)] );
+        return new Coord2D(3,3);
     }
 }
