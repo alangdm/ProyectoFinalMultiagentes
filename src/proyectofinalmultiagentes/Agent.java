@@ -7,7 +7,10 @@ package proyectofinalmultiagentes;
 import State.Coord2D;
 import State.State;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -26,9 +29,9 @@ public class Agent implements Comparable<Agent> {
      * orientation puede ser "up", "down", "left", "right", es case insentitive
      */
     private String orientation;
-    private int positionX;
-    private int positionY;
-    private Environment env;
+    protected int positionX;
+    protected int positionY;
+    protected Environment env;
     private ProximitySensor prox;
     private MessageServer msgSvr;
     private int capacity;
@@ -67,6 +70,7 @@ public class Agent implements Comparable<Agent> {
         currentRed = currentGreen = currentBlue = 0;
         messageQueue = new ConcurrentLinkedQueue<>();
         this.interfaz = interfaz;
+        setAgentInInteface();
     }
     
     public Agent(){}
@@ -79,6 +83,18 @@ public class Agent implements Comparable<Agent> {
 
     public int getPositionX() {
         return positionX;
+    }
+    
+    public void setPositionX(int positionX){
+        this.positionX = positionX;
+    }
+    
+    public void setPositionY(int positionY){
+        this.positionY = positionY;
+    }
+    
+    public void setAgentInInteface(){
+        interfaz.setTile(new Coord2D(positionX,positionY), Interfaz.getAgentColor(currentColor), Interfaz.AGENT);
     }
 
     public int getPositionY() {
@@ -95,6 +111,10 @@ public class Agent implements Comparable<Agent> {
     
     public static void resetId(){
         nextId = 1;
+    }
+    
+    public boolean getObjectiveAccomplished(){
+        return currentBlue>=objectiveBlue && currentGreen>=objectiveGreen && currentRed>=objectiveRed;
     }
     
     public State getCurrentState(){
@@ -116,7 +136,10 @@ public class Agent implements Comparable<Agent> {
                 sourceCoord = new Coord2D(0,0);
                 break;
         }
-        return new State(new Coord2D(positionX,positionY), sourceCoord, carryingColor, env.getWalls(),containerCoord,carryingColor?containerCoord:sourceCoord);
+        sourceCoord=new Coord2D(sourceCoord.getY(),sourceCoord.getX());
+        containerCoord = new Coord2D(containerCoord.getY(),containerCoord.getX());
+        //return new State(new Coord2D(positionY,positionX), sourceCoord, carryingColor, env.getWalls(),containerCoord,carryingColor?containerCoord:sourceCoord);
+        return new State(new Coord2D(positionY,positionX), sourceCoord, carryingColor, env.getWalls(),containerCoord,sourceCoord);
     }
     //End Getters
     
@@ -148,11 +171,16 @@ public class Agent implements Comparable<Agent> {
     
     //Ejecutores de acciones
     
-    public void chooseNewColor(){
+    public boolean chooseNewColor(){
         checkMessages();
+        if(env.getContainerPosition().equals(new Coord2D(positionX, positionY))){
+            //moverte fuera del destination
+        }
         int remainingRed = objectiveRed-estimatedRed;
         int remainingBlue = objectiveBlue-estimatedBlue;
         int remainingGreen = objectiveGreen-estimatedGreen;
+        if((remainingRed+remainingBlue+remainingGreen)<=0)
+            return false;
         if(remainingRed>=remainingBlue){
             if(remainingRed>=remainingGreen){
                 currentColor = COLORRED;
@@ -171,10 +199,11 @@ public class Agent implements Comparable<Agent> {
             currentColor = COLORGREEN;
             amountToHarvest = remainingGreen;
         }
-        Message colorChosen = new Message("tell","colorChosen",new MessageBody(currentColor,amountToHarvest),-1,id);  
+        
+        Message colorChosen = new Message("tell","colorChosen",new MessageBody(currentColor,capacity<amountToHarvest?capacity:amountToHarvest),-1,id);  
+        System.out.println("Color chosen color: " + (int)currentColor + " amount: "+(capacity<amountToHarvest?capacity:amountToHarvest));
         sendMessage(colorChosen);
-        //get nuevas acciones en base a getcurrentstate, ejecutarlas con executelistofactions
-        //esto es con maxq_qlearning.hierarchicalexecution pero no se bien como llamar a ese metodo
+        return true;
     }
     
     public void executeListOfActions(List<String> actions){
@@ -182,10 +211,10 @@ public class Agent implements Comparable<Agent> {
             action = action.substring(3).toLowerCase();
             boolean notMovement = action.equals("pickup") || action.equals("putdown");
             setOrientation(action);
-            if(!notMovement && prox.senseDistance()==1){
+            /*if(!notMovement && prox.senseDistance()==1){
                 if(avoidObstacle()){
                     //pedir replaneacion
-                    System.out.println("Necesito un nuevo plan");
+                    System.out.println("Evadiiiiiir");
                 }
                 else{
                     //enviar mensaje de encierro
@@ -193,13 +222,19 @@ public class Agent implements Comparable<Agent> {
                 }
                 break;
             }
-            else{
-                executeAction(action);   
+            else{*/
+                executeAction(action); 
+            try {
+                Thread.sleep(100);
+            
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Agent.class.getName()).log(Level.SEVERE, null, ex);
             }
+            //}
         }
     }
     
-    private void executeAction(String action){
+    protected void executeAction(String action){
         switch(action.toLowerCase()){
             /*case "turnleft":
                 turnLeft();
@@ -215,18 +250,22 @@ public class Agent implements Comparable<Agent> {
                 break;*/
             //case "moveleft":
             case "west":
+            //case "south":
                 moveLeft();
                 break;
             //case "moveright":
             case "east":
+            //case "north":
                 moveRight();
                 break;
             //case "moveup":
             case "north":
+            //case "east":
                 moveUp();
                 break;
             //case "movedown":
             case "south":
+            //case "west":
                 moveDown();
                 break;
             //case "harvestcolor":
@@ -288,7 +327,7 @@ public class Agent implements Comparable<Agent> {
                     interfaz.clean(new Coord2D(positionX,positionY));
                     positionY--;
                     env.setAgentInPosition(positionX, positionY, id);
-                    interfaz.setTile(new Coord2D(positionX,positionY), Interfaz.getAgentColor(currentColor), Interfaz.AGENT);
+                    setAgentInInteface();
                 }
                 break;
             case "down":
@@ -297,7 +336,7 @@ public class Agent implements Comparable<Agent> {
                     interfaz.clean(new Coord2D(positionX,positionY));
                     positionY++;
                     env.setAgentInPosition(positionX, positionY, id);
-                    interfaz.setTile(new Coord2D(positionX,positionY), Interfaz.getAgentColor(currentColor), Interfaz.AGENT);
+                    setAgentInInteface();
                 }
                 break;
             case "left":
@@ -306,7 +345,7 @@ public class Agent implements Comparable<Agent> {
                     interfaz.clean(new Coord2D(positionX,positionY));
                     positionX--;
                     env.setAgentInPosition(positionX, positionY, id);
-                    interfaz.setTile(new Coord2D(positionX,positionY), Interfaz.getAgentColor(currentColor), Interfaz.AGENT);
+                    setAgentInInteface();
                 }
                 break;
             case "right":
@@ -315,7 +354,7 @@ public class Agent implements Comparable<Agent> {
                     interfaz.clean(new Coord2D(positionX,positionY));
                     positionX++;
                     env.setAgentInPosition(positionX, positionY, id);
-                    interfaz.setTile(new Coord2D(positionX,positionY), Interfaz.getAgentColor(currentColor), Interfaz.AGENT);
+                    setAgentInInteface();
                 }
                 break;
         }
@@ -444,13 +483,26 @@ public class Agent implements Comparable<Agent> {
                     break;
             }
             Message colorDeposited = new Message("tell","colorDeposited",new MessageBody(currentColor,colorAmount),-1,id);  
+            System.out.println("Color Deposited color: "+(int)currentColor+" amount: "+colorAmount);
             sendMessage(colorDeposited);
-            colorAmount = 0;
-            currentColor = COLORNONE;
         }
         else{
-            //FAIL
+            switch(currentColor){
+                case COLORRED:
+                    estimatedRed-=colorAmount;
+                    break;
+                case COLORGREEN:
+                    estimatedGreen-=colorAmount;
+                    break;
+                case COLORBLUE:
+                    estimatedBlue-=colorAmount;
+                    break;
+            }
+            Message colorDeposited = new Message("tell","colorDeposited",new MessageBody(currentColor,-colorAmount),-1,id);  
+            sendMessage(colorDeposited);
         }
+        colorAmount = 0;
+        currentColor = COLORNONE;
     }
     
     //Fin Acciones planeables
@@ -462,10 +514,20 @@ public class Agent implements Comparable<Agent> {
      * @return true si pudo evadirlo, false si esta encerrado
      */
     public boolean avoidObstacle(){
+        String prevOrientation = orientation;
         for(int i =0; i<3; i++){
             turnLeft();
             if(prox.senseDistance()>1){
-                moveForward(); //quiza esto no vaya
+                moveForward();
+                try {
+                    Thread.sleep((long) (Math.random()*300));
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Agent.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                turnLeft();
+                turnLeft();
+                moveForward();
+                orientation=prevOrientation;
                 return true;
             }
         }

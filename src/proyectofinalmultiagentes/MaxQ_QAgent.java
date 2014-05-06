@@ -3,8 +3,6 @@ package proyectofinalmultiagentes;
 import Nodes.MaxNodes.MaxNode;
 import State.State;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /*
  * To change this template, choose Tools | Templates
@@ -50,6 +48,12 @@ public class MaxQ_QAgent extends Agent implements Runnable{
         //while (running) {
             if (runMaxQQ) {
                   result = learning.maxQQ(maxRoot, startState);
+                  for(State state : result){
+                      String action = state.getAction();
+                      if(!action.equalsIgnoreCase("maxpickup") && !action.equalsIgnoreCase("maxputdown")){
+                          executeAction(state.getAction());
+                      }
+                  }
                   runMaxQQ =false;
             }
             else {

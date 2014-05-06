@@ -39,8 +39,8 @@ public class State {
     }
     private ArrayList<Coord2D> walls;
     public Coord2D currentDest;
-    public int size = 5;
-    public int getSize() {
+    public static int size = 5;
+    public static int getSize() {
         return size;
     }
     

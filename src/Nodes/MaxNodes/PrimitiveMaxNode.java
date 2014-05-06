@@ -20,7 +20,7 @@ import proyectofinalmultiagentes.Agent;
  */
 public abstract class PrimitiveMaxNode<T> extends MaxNode<T>{
     
-    private Agent agent;
+    protected Agent agent;
     
     protected ConcurrentMap<T, Float> V;
     

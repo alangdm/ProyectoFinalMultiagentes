@@ -17,9 +17,7 @@ public class RecolectorAgent extends Agent implements Runnable{
     
     private MaxNode maxRoot;
     private boolean running = false;
-    private boolean runMaxQQ = false;
     private MaxQ_QLearning learning;
-    private State startState;
     private ArrayList<State> result;
 
     public MaxQ_QLearning getLearning() {
@@ -40,10 +38,20 @@ public class RecolectorAgent extends Agent implements Runnable{
 
     @Override
     public void run() {
+        running = true;
         while (running) {
-            
+            if(getObjectiveAccomplished()){
+                env.removeAgentFromPosition(positionX, positionY);
+                break;
+            }
             chooseNewColor();
             
+        }
+    }
+
+    @Override
+    public boolean chooseNewColor() {
+        if(super.chooseNewColor()){
             State state = getCurrentState();
             
             //List<String> actions = learning.hierarchicalExecution(state, maxRoot); // aqui puede ser mejor llamar a maxQ
@@ -53,23 +61,16 @@ public class RecolectorAgent extends Agent implements Runnable{
             
             List<String> actions = new ArrayList<>();
             
-            for (State s: states) {
-                actions.add(s.getAction());
+            for (int i = states.size()-1;i>=0;i--) {
+                actions.add(states.get(i).getAction());
             }
             
             executeListOfActions(actions);
-            
+            return true;
         }
+        return false;
     }
 
-    @Override
-    public void chooseNewColor() {
-        super.chooseNewColor();
-        
-    }
-    
-    
-    
     public synchronized void stop() {
         running = false;
     }
