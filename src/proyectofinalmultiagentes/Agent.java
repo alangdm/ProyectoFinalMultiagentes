@@ -116,7 +116,7 @@ public class Agent implements Comparable<Agent> {
                 sourceCoord = new Coord2D(0,0);
                 break;
         }
-        return new State(new Coord2D(positionX,positionY), sourceCoord, carryingColor, env.getWalls(),containerCoord,carryingColor?containerCoord:sourceCoord);
+        return new State(new Coord2D(positionX,positionY), sourceCoord, carryingColor, env.getWalls(),containerCoord,carryingColor?containerCoord:sourceCoord, false);
     }
     //End Getters
     

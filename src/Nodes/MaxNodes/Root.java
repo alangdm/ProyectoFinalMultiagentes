@@ -22,7 +22,7 @@ public class Root extends MaxNode<Integer>{
 
     @Override
     public boolean terminal(State s) {
-        return !s.isInCab() && s.getCab().equals(s.getDest());
+        return !s.isInCab() && s.getCab().equals(s.getDest()) && s.isPicked();
     }
 
     @Override
