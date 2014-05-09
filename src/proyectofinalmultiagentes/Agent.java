@@ -514,7 +514,7 @@ public class Agent implements Comparable<Agent> {
                     estimatedBlue-=colorAmount;
                     break;
             }
-            Message colorDeposited = new Message("tell","colorDeposited",new MessageBody(currentColor,colorAmount==0?0:-colorAmount),-1,id);  
+            Message colorDeposited = new Message("tell","colorChosen",new MessageBody(currentColor,colorAmount==0?0:-colorAmount),-1,id);  
             sendMessage(colorDeposited);
         }
         colorAmount = 0;
